@@ -274,8 +274,8 @@
       _catalogLoading = true;
 
       // Show loading indicator on all datalists
-      const sheetExportUrl = 'https://docs.google.com/spreadsheets/d/1EFtVAYEgpmsYkL4CgpAubo-LqjRvBAKBGmr3g-tekDA/export?format=csv&gid=1687630347';
-      const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(sheetExportUrl);
+      const sheetExportUrl = encodeURIComponent('https://docs.google.com/spreadsheets/d/1EFtVAYEgpmsYkL4CgpAubo-LqjRvBAKBGmr3g-tekDA/export?format=csv&gid=1687630347');
+      const url = 'https://corsproxy.io/?' + sheetExportUrl;
       fetch(url)
         .then(r => r.text())
         .then(csv => {
