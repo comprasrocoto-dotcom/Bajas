@@ -119,6 +119,37 @@
     .msg-error { background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent); }
 
     .app-footer { margin-top: 3rem; text-align: center; font-size: 12px; color: var(--text3); }
+  
+    /* ── Autocomplete dropdown ── */
+    .autocomplete-wrap { position: relative; }
+    .ac-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid var(--border, #e0dbd2);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 100;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    }
+    .ac-dropdown li {
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border, #e0dbd2);
+      line-height: 1.3;
+    }
+    .ac-dropdown li:last-child { border-bottom: none; }
+    .ac-dropdown li:hover, .ac-dropdown li.ac-active { background: var(--bg, #f7f5f2); }
+    .ac-dropdown li small { display: block; color: #999; font-size: 11px; }
+    .ac-no-results { padding: 10px 12px; color: #999; font-size: 13px; font-style: italic; }
   </style>
 </head>
 <body>
@@ -2439,11 +2470,10 @@ const PROD_MAP = new Map([
                 <input type="text" id="nombre_${id}" value="${escHtml(s.nombre)}"
                   placeholder="Escribe para buscar..."
                   autocomplete="off"
-                  list="productos_list_${id}"
                   oninput="onNombreInput(${id})"
-                  onchange="autoFillRef(${id})"
+                  onkeydown="onNombreKeydown(event, ${id})"
                   onblur="onNombreBlur(${id})" />
-                <datalist id="productos_list_${id}"></datalist>
+                <ul id="ac_list_${id}" class="ac-dropdown" style="display:none"></ul>
               </div>
               <span id="err_nombre_${id}" style="display:none;font-size:12px;color:var(--accent);margin-top:4px;">El nombre es obligatorio.</span>
             </div>
@@ -2483,16 +2513,8 @@ const PROD_MAP = new Map([
     }
 
     function buildDatalist(id) {
-      const fa  = document.getElementById('familia_'    + id)?.value || '';
-      const sub = document.getElementById('subfamilia_' + id)?.value || '';
-      const dl  = document.getElementById('productos_list_' + id);
-      if (!dl) return;
-      let items;
-      if (sub)      items = PROD_BY_SUB[sub] || [];
-      else if (fa)  items = PROD_BY_FAM[fa]  || [];
-      else          items = Object.values(PROD_BY_FAM).flat();
-      dl.innerHTML = items.map(([n, r]) => `<option value="${n} — ${r}">`).join('');
-    }
+    // Replaced by ac-dropdown — no-op kept for compatibility
+  }
 
     function onFamiliaChange(id) {
       saveCard(id);
@@ -2523,9 +2545,56 @@ const PROD_MAP = new Map([
     }
 
     function onNombreInput(id) {
-      saveCard(id);
-      clearNombreErr(id);
+    saveCard(id);
+    clearNombreErr(id);
+    const val = document.getElementById('nombre_' + id).value.trim().toLowerCase();
+    const list = document.getElementById('ac_list_' + id);
+    if (!val || val.length < 2) { list.style.display = 'none'; list.innerHTML = ''; return; }
+    // Build list of all products
+    const all = [];
+    Object.values(PROD_BY_FAM).forEach(arr => arr.forEach(p => { if (!all.find(x => x.nombre === p.nombre)) all.push(p); }));
+    const matches = all.filter(p => p.nombre.toLowerCase().includes(val)).slice(0, 40);
+    if (!matches.length) {
+      list.innerHTML = '<li class="ac-no-results">Sin resultados</li>';
+    } else {
+      list.innerHTML = matches.map(p =>
+        '<li onmousedown="acSelect(' + id + ',\'' + p.nombre.replace(/'/g,"\\'") + '\',\'' + (p.ref||'').replace(/'/g,"\\'") + '\')" >' +
+        escHtml(p.nombre) + (p.ref ? '<small>' + escHtml(p.ref) + '</small>' : '') + '</li>'
+      ).join('');
     }
+    list.style.display = 'block';
+  }
+
+  function acSelect(id, nombre, ref) {
+    const inp = document.getElementById('nombre_' + id);
+    inp.value = nombre;
+    const refInp = document.getElementById('ref_' + id);
+    if (refInp && ref) refInp.value = ref;
+    const list = document.getElementById('ac_list_' + id);
+    list.style.display = 'none';
+    saveCard(id);
+    clearNombreErr(id);
+  }
+
+  function onNombreKeydown(e, id) {
+    const list = document.getElementById('ac_list_' + id);
+    if (list.style.display === 'none') return;
+    const items = list.querySelectorAll('li:not(.ac-no-results)');
+    let active = list.querySelector('li.ac-active');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!active) { items[0] && items[0].classList.add('ac-active'); }
+      else { active.classList.remove('ac-active'); const next = active.nextElementSibling; if (next) next.classList.add('ac-active'); }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (active) { active.classList.remove('ac-active'); const prev = active.previousElementSibling; if (prev) prev.classList.add('ac-active'); }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (active) active.dispatchEvent(new MouseEvent('mousedown'));
+    } else if (e.key === 'Escape') {
+      list.style.display = 'none';
+    }
+  }
 
     function autoFillRef(id) {
       const val  = document.getElementById('nombre_' + id)?.value || '';
@@ -2540,6 +2609,7 @@ const PROD_MAP = new Map([
     }
 
     function onNombreBlur(id) {
+    setTimeout(() => { const l = document.getElementById('ac_list_' + id); if(l) l.style.display='none'; }, 150);
       checkNombre(id);
     }
 
