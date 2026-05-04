@@ -259,9 +259,6 @@
 
   <script>
 // ── Catálogo dinámico desde Google Sheets ──
-    const SHEET_ID = '1EFtVAYEgpmsYkL4CgpAubo-LqjRvBAKBGmr3g-tekDA';
-    const SHEET_GID = '1687630347';
-
     let FAMILIAS = [];
     let FAM_TO_SUB = {};
     let PROD_BY_FAM = {};
@@ -277,7 +274,7 @@
       _catalogLoading = true;
 
       // Show loading indicator on all datalists
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+      const url = 'https://docs.google.com/spreadsheets/d/2PACX-1vR17rBdFccCaYrDuIwYb6OQj_kBL8z_Vke6An9CgOb0jaS2LxY1bJ3tO7nIbylNL-dieDSdYtTFstWO/pub?gid=1687630347&single=true&output=csv';
       fetch(url)
         .then(r => r.text())
         .then(csv => {
