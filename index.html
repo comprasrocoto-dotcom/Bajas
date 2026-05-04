@@ -2504,10 +2504,11 @@ const PROD_MAP = new Map([
                 <input type="text" id="nombre_${id}" value="${escHtml(s.nombre)}"
                   placeholder="Escribe para buscar..."
                   autocomplete="off"
+                  list="productos_list_${id}"
                   oninput="onNombreInput(${id})"
-                  onkeydown="onNombreKeydown(event, ${id})"
+                  onchange="autoFillRef(${id})"
                   onblur="onNombreBlur(${id})" />
-                <ul id="ac_list_${id}" class="ac-dropdown" style="display:none"></ul>
+                <datalist id="productos_list_${id}"></datalist>
               </div>
               <span id="err_nombre_${id}" style="display:none;font-size:12px;color:var(--accent);margin-top:4px;">El nombre es obligatorio.</span>
             </div>
@@ -2547,7 +2548,17 @@ const PROD_MAP = new Map([
     }
 
     function buildDatalist(id) {
-    // Replaced by ac-dropdown — no-op kept for compatibility
+    const fam = document.getElementById('familia_' + id)?.value || '';
+    const sub = document.getElementById('subfamilia_' + id)?.value || '';
+    let prods = [];
+    if (sub && PROD_BY_SUB[sub]) prods = PROD_BY_SUB[sub];
+    else if (fam && PROD_BY_FAM[fam]) prods = PROD_BY_FAM[fam];
+    else Object.values(PROD_BY_FAM).forEach(arr => prods.push(...arr));
+    const dl = document.getElementById('productos_list_' + id);
+    if (!dl) return;
+    dl.innerHTML = prods.map(p =>
+      '<option value="' + escHtml(p.nombre) + '" data-ref="' + escHtml(p.ref || '') + '"></option>'
+    ).join('');
   }
 
     function onFamiliaChange(id) {
@@ -2581,22 +2592,6 @@ const PROD_MAP = new Map([
     function onNombreInput(id) {
     saveCard(id);
     clearNombreErr(id);
-    const val = document.getElementById('nombre_' + id).value.trim().toLowerCase();
-    const list = document.getElementById('ac_list_' + id);
-    if (!val || val.length < 2) { list.style.display = 'none'; list.innerHTML = ''; return; }
-    // Build list of all products
-    const all = [];
-    Object.values(PROD_BY_FAM).forEach(arr => arr.forEach(p => { if (!all.find(x => x.nombre === p.nombre)) all.push(p); }));
-    const matches = all.filter(p => p.nombre.toLowerCase().includes(val)).slice(0, 40);
-    if (!matches.length) {
-      list.innerHTML = '<li class="ac-no-results">Sin resultados</li>';
-    } else {
-      list.innerHTML = matches.map(p =>
-        '<li onmousedown="acSelect(' + id + ',\'' + p.nombre.replace(/'/g,"\\'") + '\',\'' + (p.ref||'').replace(/'/g,"\\'") + '\')" >' +
-        escHtml(p.nombre) + (p.ref ? '<small>' + escHtml(p.ref) + '</small>' : '') + '</li>'
-      ).join('');
-    }
-    list.style.display = 'block';
   }
 
   function acSelect(id, nombre, ref) {
