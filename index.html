@@ -120,37 +120,7 @@
 
     .app-footer { margin-top: 3rem; text-align: center; font-size: 12px; color: var(--text3); }
   
-    /* ── Autocomplete dropdown ── */
-    .autocomplete-wrap { position: relative; }
-    .ac-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #fff;
-      border: 1px solid var(--border, #e0dbd2);
-      border-top: none;
-      border-radius: 0 0 8px 8px;
-      max-height: 220px;
-      overflow-y: auto;
-      z-index: 100;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,.1);
-    }
-    .ac-dropdown li {
-      padding: 8px 12px;
-      font-size: 14px;
-      cursor: pointer;
-      border-bottom: 1px solid var(--border, #e0dbd2);
-      line-height: 1.3;
-    }
-    .ac-dropdown li:last-child { border-bottom: none; }
-    .ac-dropdown li:hover, .ac-dropdown li.ac-active { background: var(--bg, #f7f5f2); }
-    .ac-dropdown li small { display: block; color: #999; font-size: 11px; }
-    .ac-no-results { padding: 10px 12px; color: #999; font-size: 13px; font-style: italic; }
-  
+      
     /* ── Buscador en reporte ── */
     .search-bar-wrap {
       margin-bottom: 12px;
@@ -2594,36 +2564,6 @@ const PROD_MAP = new Map([
     clearNombreErr(id);
   }
 
-  function acSelect(id, nombre, ref) {
-    const inp = document.getElementById('nombre_' + id);
-    inp.value = nombre;
-    const refInp = document.getElementById('ref_' + id);
-    if (refInp && ref) refInp.value = ref;
-    const list = document.getElementById('ac_list_' + id);
-    list.style.display = 'none';
-    saveCard(id);
-    clearNombreErr(id);
-  }
-
-  function onNombreKeydown(e, id) {
-    const list = document.getElementById('ac_list_' + id);
-    if (list.style.display === 'none') return;
-    const items = list.querySelectorAll('li:not(.ac-no-results)');
-    let active = list.querySelector('li.ac-active');
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (!active) { items[0] && items[0].classList.add('ac-active'); }
-      else { active.classList.remove('ac-active'); const next = active.nextElementSibling; if (next) next.classList.add('ac-active'); }
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (active) { active.classList.remove('ac-active'); const prev = active.previousElementSibling; if (prev) prev.classList.add('ac-active'); }
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (active) active.dispatchEvent(new MouseEvent('mousedown'));
-    } else if (e.key === 'Escape') {
-      list.style.display = 'none';
-    }
-  }
 
     function autoFillRef(id) {
       const val  = document.getElementById('nombre_' + id)?.value || '';
