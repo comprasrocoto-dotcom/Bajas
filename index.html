@@ -150,6 +150,36 @@
     .ac-dropdown li:hover, .ac-dropdown li.ac-active { background: var(--bg, #f7f5f2); }
     .ac-dropdown li small { display: block; color: #999; font-size: 11px; }
     .ac-no-results { padding: 10px 12px; color: #999; font-size: 13px; font-style: italic; }
+  
+    /* ── Buscador en reporte ── */
+    .search-bar-wrap {
+      margin-bottom: 12px;
+    }
+    .search-bar-wrap input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border, #e0dbd2);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--surface, #fff);
+      color: var(--text, #1a1814);
+      outline: none;
+      transition: border-color .2s;
+      box-sizing: border-box;
+    }
+    .search-bar-wrap input:focus {
+      border-color: var(--accent, #c84b2f);
+    }
+    .product-card.hidden-by-search {
+      display: none;
+    }
+    .search-no-results {
+      text-align: center;
+      color: var(--text3, #9e9891);
+      font-size: 14px;
+      padding: 20px 0;
+    }
   </style>
 </head>
 <body>
@@ -211,6 +241,10 @@
       <span class="count-badge" id="contador">0 productos</span>
     </div>
 
+    <div class="search-bar-wrap">
+      <input type="text" id="searchProductos" placeholder="🔍 Buscar producto en el reporte..."
+        oninput="filterProductsList()" autocomplete="off" />
+    </div>
     <div class="products-list" id="productsList"></div>
     <button class="add-btn" onclick="addProduct()">+ Agregar producto</button>
 
@@ -2641,6 +2675,29 @@ const PROD_MAP = new Map([
       badge.textContent = tipo === 'baja' ? 'baja' : tipo === 'rotacion' ? 'rotación' : '';
       badge.style.display = tipo ? 'inline-block' : 'none';
     }
+
+  function filterProductsList() {
+    const q = document.getElementById('searchProductos').value.trim().toLowerCase();
+    const cards = document.querySelectorAll('#productsList .product-card');
+    let visible = 0;
+    cards.forEach(card => {
+      const nombre = (card.querySelector('[id^="nombre_"]') || {}).value || '';
+      const ref = (card.querySelector('[id^="ref_"]') || {}).value || '';
+      const matches = !q || nombre.toLowerCase().includes(q) || ref.toLowerCase().includes(q);
+      card.classList.toggle('hidden-by-search', !matches);
+      if (matches) visible++;
+    });
+    // Show/hide no-results message
+    let noRes = document.getElementById('searchNoResults');
+    if (!noRes) {
+      noRes = document.createElement('p');
+      noRes.id = 'searchNoResults';
+      noRes.className = 'search-no-results';
+      noRes.textContent = 'No se encontraron productos';
+      document.getElementById('productsList').after(noRes);
+    }
+    noRes.style.display = (q && visible === 0) ? 'block' : 'none';
+  }
 
     function escHtml(str) {
       return String(str || '')
