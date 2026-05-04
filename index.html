@@ -2337,13 +2337,16 @@ const PROD_MAP = new Map([
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwaIFtfgYgKUGzuIn41tFWg7uY-2mR0RkEWbJqj0ben1WVNmzrkk20tDDgs66VTIlNwAw/exec';
 
     const MOTIVOS = [
-      { label: "Vencimiento próximo", tipo: "baja" },
-      { label: "Producto vencido",    tipo: "baja" },
-      { label: "Daño físico",         tipo: "baja" },
-      { label: "Mala rotación",       tipo: "rotacion" },
-      { label: "Exceso de inventario",tipo: "rotacion" },
-      { label: "Baja demanda",        tipo: "rotacion" },
-      { label: "Otro",                tipo: "baja" }
+      { label: "Accidente Laboral", tipo: "baja" },
+      { label: "Bajas por desarollo",    tipo: "baja" },
+      { label: "Capacitacion",         tipo: "baja" },
+      { label: "Cobro de Inventarios",       tipo: "Cobro" },
+      { label: "Daño",tipo: "rotacion" },
+      { label: "Devolucion Cliente",        tipo: "Baja" },
+      { label: "Fotos",                tipo: "baja" }
+      { label: "Mala Rotacion",                tipo: "Cobro" }
+      { label: "Merma",                tipo: "Baja" }
+      { label: "Prueba de Calidad",                tipo: "Cobro" }
     ];
 
     let cardData = {};  // id -> { nombre, codigo, cantidad, fecha, notas, motivo }
