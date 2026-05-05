@@ -279,7 +279,7 @@
 
       // Show loading indicator on all datalists
       const sheetExportUrl = encodeURIComponent('https://docs.google.com/spreadsheets/d/1EFtVAYEgpmsYkL4CgpAubo-LqjRvBAKBGmr3g-tekDA/export?format=csv&gid=1687630347');
-      const url = 'https://corsproxy.io/?' + sheetExportUrl;
+      const url = 'https://api.allorigins.win/raw?url=' + sheetExportUrl;
       fetch(url)
         .then(r => r.text())
         .then(csv => {
@@ -742,7 +742,7 @@
     _histLoadingFlag = true;
     try {
       const csvUrl = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=0';
-      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(csvUrl);
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(csvUrl);
       const res = await fetch(proxyUrl);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const csv = await res.text();
