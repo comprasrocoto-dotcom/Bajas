@@ -258,6 +258,10 @@
   </div>
 
   <script>
+  // ── Configuración Google Sheets ──
+  const SCRIPT_URL = 'https://script.google.com/macros/s/undefined/exec';
+  const SHEET_ID = '1EFtVAYEgpmsYkL4CgpAubo-LqjRvBAKBGmr3g-tekDA';
+
 // ── Catálogo dinámico desde Google Sheets ──
     let FAMILIAS = [];
     let FAM_TO_SUB = {};
@@ -716,7 +720,7 @@
           okEl.style.display = 'block';
           okEl.textContent = `Reporte guardado en Google Sheets correctamente (${payload.productos.length} producto${payload.productos.length !== 1 ? 's' : ''}).`;
           okEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          renderHistorial();
+          loadHistorial(); // datos en tiempo real desde Google Sheets
         } else {
           throw new Error(json.error || 'Error desconocido');
         }
@@ -730,7 +734,72 @@
       }
     }
 
-    function renderHistorial() {
+      // ── Historial en tiempo real desde Google Sheets ──
+  let _histLoadingFlag = false;
+
+  async function loadHistorial() {
+    if (_histLoadingFlag) return;
+    _histLoadingFlag = true;
+    try {
+      const csvUrl = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=0';
+      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(csvUrl);
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const csv = await res.text();
+      const lines = csv.split('\n').slice(1);
+      const rows = [];
+      lines.forEach(line => {
+        if (!line.trim()) return;
+        const cols = parseCsvLine(line);
+        if (cols.length < 3) return;
+        rows.push({ fechaReporte: cols[0]||'',          restaurante: cols[1]||'', encargado: cols[2]||'',
+          producto: cols[3]||'', codigo: cols[4]||'', familia: cols[5]||'',
+          subfamilia: cols[6]||'', cantidad: cols[7]||'', vencimiento: cols[8]||'',
+          motivo: cols[9]||'', notas: cols[10]||'', fechaRegistro: cols[11]||'' });
+      });
+      renderHistorialFromSheets(rows);
+    } catch (err) { console.error('loadHistorial error:', err); }
+    finally { _histLoadingFlag = false; }
+  }
+
+  function renderHistorialFromSheets(rows) {
+    const wrap = document.getElementById('historialWrap');
+    const list = document.getElementById('historialList');
+    const count = document.getElementById('historialCount');
+    if (!rows || !rows.length) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    const groups = {};
+    rows.forEach(r => {
+      const key = (r.fechaReporte||'')+'|'+(r.restaurante||'')+'|'+(r.encargado||'');
+      if (!groups[key]) groups[key] = { meta: r, prods: [] };
+      groups[key].prods.push(r);
+    });
+    const arr = Object.values(groups).reverse();
+    count.textContent = arr.length;
+    list.innerHTML = arr.map(g => {
+      const m = g.meta;
+      let html = '<div class="product-card" style="margin-bottom:16px">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+      html += '<div><span style="font-size:1rem;font-weight:600;color:var(--text)">' + escHtml(m.restaurante) + '</span>';
+      html += '<span style="font-size:.85rem;color:var(--text3);margin-left:8px">' + escHtml(m.fechaReporte) + '</span></div>';
+      html += '<span style="font-size:.85rem;font-family:DM Mono,monospace;color:var(--text3)">' + g.prods.length + ' prod.</span></div>';
+      html += '<div style="font-size:.85rem;color:var(--text2);margin-bottom:6px">Encargado: ' + escHtml(m.encargado) + '</div>';
+      html += '<div style="border-top:1px solid var(--border);padding-top:8px">';
+      g.prods.forEach(p => {
+        html += '<div style="margin-bottom:4px;padding:3px 0;border-bottom:1px solid var(--border2)">';
+        html += '<span style="font-weight:500">' + escHtml(p.producto) + '</span>';
+        if (p.codigo) html += '<span style="font-family:DM Mono,monospace;font-size:.78rem;color:var(--text3);margin-left:6px">[' + escHtml(p.codigo) + ']</span>';
+        html += '<span style="color:var(--text3);font-size:.85rem;margin-left:6px">x' + escHtml(p.cantidad) + '</span>';
+        html += ' \u2014 <span style="color:var(--text2)">' + escHtml(p.motivo) + '</span>';
+        if (p.notas) html += '<div style="font-size:.78rem;color:var(--text3);margin-top:2px">Notas: ' + escHtml(p.notas) + '</div>';
+        html += '</div>';
+      });
+      html += '</div></div>';
+      return html;
+    }).join('');
+  }
+
+function renderHistorial() {
       const historial = JSON.parse(localStorage.getItem('reportes_historial') || '[]');
       const wrap  = document.getElementById('historialWrap');
       const list  = document.getElementById('historialList');
@@ -768,7 +837,7 @@
       const historial = JSON.parse(localStorage.getItem('reportes_historial') || '[]');
       historial.splice(i, 1);
       localStorage.setItem('reportes_historial', JSON.stringify(historial));
-      renderHistorial();
+      loadHistorial(); // carga inicial desde Google Sheets
     }
 
     function submitReport() {
@@ -818,7 +887,7 @@
     document.getElementById('fechaReporte').valueAsDate = new Date();
     addProduct();
     renderHistorial();
-  </script>
-
-</body>
-</html>
+  
+  // ── Actualización automática cada 30 s ──
+  setInterval(loadHistorial, 30000);
+</script>
