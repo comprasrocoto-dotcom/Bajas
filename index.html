@@ -267,6 +267,7 @@
     let FAM_TO_SUB = {};
     let PROD_BY_FAM = {};
     let PROD_BY_SUB = {};
+    let PROD_MAP = new Map();
     let _catalogLoaded = false;
     let _catalogLoading = false;
     let _catalogCallbacks = [];
@@ -294,6 +295,7 @@
           FAM_TO_SUB = {};
           PROD_BY_FAM = {};
           PROD_BY_SUB = {};
+          PROD_MAP = new Map();
 
           lines.forEach(line => {
             if (!line.trim()) return;
@@ -306,7 +308,7 @@
             if (!nombre) return;
 
             // Build FAMILIAS
-            if (familia && !FAMILIAS.includes(familia)) FAMILIAS.push(familia);
+            if (familia && !FAMILIAS.includes(familia) && !/^\d/.test(familia)) FAMILIAS.push(familia);
 
             // Build FAM_TO_SUB
             if (familia && subfamilia) {
@@ -325,6 +327,9 @@
               if (!PROD_BY_SUB[subfamilia]) PROD_BY_SUB[subfamilia] = [];
               PROD_BY_SUB[subfamilia].push({ nombre, ref });
             }
+
+            // Build PROD_MAP for autoFillRef
+            PROD_MAP.set(nombre, { nombre, ref });
           });
 
           FAMILIAS.sort();
