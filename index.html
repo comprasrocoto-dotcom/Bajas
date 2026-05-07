@@ -511,7 +511,7 @@
             <label>Unidad de medida</label>
             <select id="unidad_${id}" onchange="saveCard(${id})">
               <option value="">Selecciona...</option>
-              ${['UND','KG','GR','LT','ML','CC','OZ','BT','CJ','PAQ','DOC','PZA','PORCIONES','CANECA','BOLSA','ROLLO','METRO']
+              ${['UND','KG','GR','GRAMOS','LT','ML','CC','OZ','BT','CJ','PAQ','DOC','PZA','PORCIONES','CANECA','BOLSA','ROLLO','METRO']
                 .map(u => `<option value="${u}"${s.unidadMedida===u?' selected':''}>${u}</option>`).join('')}
             </select>
           </div>
