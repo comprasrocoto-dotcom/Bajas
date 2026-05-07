@@ -304,7 +304,8 @@
             const ref = (cols[0] || '').trim();
             const nombre = (cols[1] || '').trim();
             const familia = (cols[2] || '').trim();
-            const subfamilia = (cols[3] || '').trim();
+            const subfamilia   = (cols[3] || '').trim();
+            const unidadMedida = (cols[4] || '').trim();
             if (!nombre) return;
 
             // Build FAMILIAS
@@ -329,7 +330,7 @@
             }
 
             // Build PROD_MAP for autoFillRef
-            PROD_MAP.set(nombre, { nombre, ref });
+            PROD_MAP.set(nombre, { nombre, ref, unidadMedida });
           });
 
           FAMILIAS.sort();
@@ -395,7 +396,7 @@
       counter++;
       const id = counter;
       products.push(id);
-      cardData[id] = { nombre: '', codigo: '', cantidad: '', fecha: '', notas: '', motivo: '', familia: '', subfamilia: '' };
+      cardData[id] = { nombre: '', codigo: '', cantidad: '', fecha: '', notas: '', motivo: '', familia: '', subfamilia: '', unidadMedida: '' };
       loadCatalog();
       renderProducts();
       setTimeout(() => {
@@ -419,8 +420,9 @@
         fecha:    document.getElementById('fecha_'    + id)?.value || '',
         notas:    document.getElementById('notas_'    + id)?.value || '',
         motivo:    document.getElementById('motivo_'    + id)?.value || '',
-        familia:   document.getElementById('familia_'   + id)?.value || '',
-        subfamilia:document.getElementById('subfamilia_'+ id)?.value || ''
+        familia:      document.getElementById('familia_'      + id)?.value || '',
+        subfamilia:   document.getElementById('subfamilia_'   + id)?.value || '',
+        unidadMedida: document.getElementById('unidad_'       + id)?.value || ''
       };
     }
 
@@ -505,6 +507,14 @@
               <input type="date" id="fecha_${id}" value="${escHtml(s.fecha)}" onchange="saveCard(${id})" />
             </div>
           </div>
+          <div class="field" style="margin-bottom:12px;">
+            <label>Unidad de medida</label>
+            <select id="unidad_${id}" onchange="saveCard(${id})">
+              <option value="">Selecciona...</option>
+              ${['UND','KG','GR','LT','ML','CC','OZ','BT','CJ','PAQ','DOC','PZA','PORCIONES','CANECA','BOLSA','ROLLO','METRO']
+                .map(u => `<option value="${u}"${s.unidadMedida===u?' selected':''}>${u}</option>`).join('')}
+            </select>
+          </div>
 
           <div class="field" style="margin-bottom:12px;">
             <label>Motivo</label>
@@ -580,6 +590,8 @@
         if (inp) inp.value = data.nombre;
         const cod = document.getElementById('codigo_' + id);
         if (cod) cod.value = data.ref;
+        const unidadSel = document.getElementById('unidad_' + id);
+        if (unidadSel && data.unidadMedida) unidadSel.value = data.unidadMedida;
         saveCard(id);
       }
     }
@@ -670,7 +682,7 @@
         const d = cardData[id] || {};
         body += `[${i + 1}] ${d.nombre || ''}\n`;
         if (d.codigo)   body += `    Código:      ${d.codigo}\n`;
-        body           += `    Cantidad:    ${d.cantidad}\n`;
+        body           += `    Cantidad:    ${d.cantidad}${d.unidadMedida ? ' ' + d.unidadMedida : ''}\n`;
         if (d.fecha)    body += `    Vencimiento: ${d.fecha}\n`;
         body           += `    Motivo:      ${d.motivo}\n`;
         if (d.notas)    body += `    Notas:       ${d.notas}\n`;
@@ -709,10 +721,11 @@
           codigo:     cardData[id].codigo,
           familia:    cardData[id].familia,
           subfamilia: cardData[id].subfamilia,
-          cantidad:   cardData[id].cantidad,
-          fecha:      cardData[id].fecha,
-          motivo:     cardData[id].motivo,
-          notas:      cardData[id].notas
+          cantidad:     cardData[id].cantidad,
+          unidadMedida: cardData[id].unidadMedida || '',
+          fecha:        cardData[id].fecha,
+          motivo:       cardData[id].motivo,
+          notas:        cardData[id].notas
         }))
       };
 
