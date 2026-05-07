@@ -11,7 +11,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f7f5f2;
+      --bg: #f7f5f2;h
       --surface: #ffffff;
       --surface2: #f0ede8;
       --border: #e0dbd2;
@@ -285,7 +285,7 @@
         .then(jsonResp => {
           if (!jsonResp.ok) throw new Error(jsonResp.error || 'Error');
           const csv = 'header\n' + jsonResp.data.map(function(item) {
-            return [item.ref, item.nombre, item.familia, item.subfamilia].join(',');
+            return [item.ref, item.nombre, item.familia, item.subfamilia, item.unidadMedida].join(',');
           }).join('\n');
           return csv;
         })
