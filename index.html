@@ -509,11 +509,11 @@
           </div>
           <div class="field" style="margin-bottom:12px;">
             <label>Unidad de medida</label>
-            <select id="unidad_${id}" onchange="saveCard(${id})">
-              <option value="">Selecciona...</option>
-              ${['UND','KG','GR','GRAMOS','LT','ML','CC','OZ','BT','CJ','PAQ','DOC','PZA','PORCIONES','CANECA','BOLSA','ROLLO','METRO']
-                .map(u => `<option value="${u}"${s.unidadMedida===u?' selected':''}>${u}</option>`).join('')}
-            </select>
+            <div id="unidad_wrap_${id}" style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text2);min-height:40px;display:flex;align-items:center;gap:6px;">
+              <span id="unidad_${id}_display" style="font-weight:500;color:var(--text);display:${s.unidadMedida ? 'inline' : 'none'};">${escHtml(s.unidadMedida || '')}</span>
+              <span id="unidad_${id}_msg" style="font-size:12px;color:var(--text3);font-style:italic;display:${(!s.unidadMedida && s.nombre) ? 'inline' : 'none'};">Este producto no tiene unidad de medida definida en la base de datos.</span>
+            </div>
+            <input type="hidden" id="unidad_${id}" value="${escHtml(s.unidadMedida || '')}VAL" />
           </div>
 
           <div class="field" style="margin-bottom:12px;">
@@ -583,18 +583,40 @@
 
 
     function autoFillRef(id) {
-      const val  = document.getElementById('nombre_' + id)?.value || '';
-      const data = PROD_MAP.get(val);
-      if (data) {
-        const inp = document.getElementById('nombre_' + id);
-        if (inp) inp.value = data.nombre;
-        const cod = document.getElementById('codigo_' + id);
-        if (cod) cod.value = data.ref;
-        const unidadSel = document.getElementById('unidad_' + id);
-        if (unidadSel && data.unidadMedida) unidadSel.value = data.unidadMedida;
-        saveCard(id);
-      }
+  const val = document.getElementById('nombre_' + id)?.value || '';
+  const data = PROD_MAP.get(val);
+  const displayEl = document.getElementById('unidad_' + id + '_display');
+  const msgEl = document.getElementById('unidad_' + id + '_msg');
+  const hiddenEl = document.getElementById('unidad_' + id);
+
+  if (data) {
+    // Rellenar código / referencia
+    const cod = document.getElementById('codigo_' + id);
+    if (cod) cod.value = data.ref;
+
+    // Rellenar unidad de medida desde columna E del Sheets
+    const unidad = (data.unidadMedida || '').trim();
+    if (hiddenEl) hiddenEl.value = unidad;
+    if (displayEl) {
+      displayEl.textContent = unidad;
+      displayEl.style.display = unidad ? 'inline' : 'none';
     }
+    if (msgEl) {
+      msgEl.style.display = unidad ? 'none' : 'inline';
+    }
+    saveCard(id);
+  } else if (val) {
+    // Producto escrito pero no encontrado en el catálogo
+    if (hiddenEl) hiddenEl.value = '';
+    if (displayEl) { displayEl.textContent = ''; displayEl.style.display = 'none'; }
+    if (msgEl) msgEl.style.display = 'inline';
+  } else {
+    // Campo vacío
+    if (hiddenEl) hiddenEl.value = '';
+    if (displayEl) { displayEl.textContent = ''; displayEl.style.display = 'none'; }
+    if (msgEl) msgEl.style.display = 'none';
+  }
+}
 
     function onNombreBlur(id) {
     setTimeout(() => { const l = document.getElementById('ac_list_' + id); if(l) l.style.display='none'; }, 150);
