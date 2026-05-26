@@ -8,13 +8,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
-/* ══════════════════════════════════════════════
-   VARIABLES Y RESET
-══════════════════════════════════════════════ */
+/* ══ RESET ══ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Paleta corporativa azul-gris */
   --bg:           #f0f2f5;
   --surface:      #ffffff;
   --surface2:     #f8f9fb;
@@ -46,480 +43,162 @@
   --shadow-md:    0 4px 12px rgba(0,0,0,.1);
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-/* ══════════════════════════════════════════════
-   LAYOUT — SIDEBAR + MAIN
-══════════════════════════════════════════════ */
+/* ══ LAYOUT ══ */
 .layout { display: flex; min-height: 100vh; }
 
-/* Sidebar */
 .sidebar {
-  width: var(--sidebar-w);
-  background: var(--text);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  position: fixed;
-  top: 0; left: 0; bottom: 0;
-  z-index: 100;
+  width: var(--sidebar-w); background: var(--text); color: #fff;
+  display: flex; flex-direction: column; flex-shrink: 0;
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
 }
-
-.sidebar-header {
-  padding: 20px 18px 16px;
-  border-bottom: 1px solid rgba(255,255,255,.1);
-}
-
-.sidebar-logo {
-  display: flex; align-items: center; gap: 10px;
-}
-
-.logo-icon {
-  width: 38px; height: 38px;
-  background: var(--primary);
-  border-radius: var(--radius-sm);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-
+.sidebar-header { padding: 20px 18px 16px; border-bottom: 1px solid rgba(255,255,255,.1); }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 38px; height: 38px; background: var(--primary); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .logo-icon svg { width: 20px; height: 20px; fill: white; }
-
 .logo-name { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.2; }
 .logo-sub  { font-size: 11px; color: rgba(255,255,255,.5); }
-
 .nav-section { padding: 16px 12px 8px; }
-.nav-section-label {
-  font-size: 10px; font-weight: 600; color: rgba(255,255,255,.35);
-  text-transform: uppercase; letter-spacing: .08em;
-  padding: 0 6px; margin-bottom: 6px;
-}
-
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 10px; border-radius: var(--radius-sm);
-  font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,.65);
-  cursor: pointer; transition: all .15s; margin-bottom: 2px;
-  border: none; background: none; width: 100%; text-align: left;
-}
-
+.nav-section-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .08em; padding: 0 6px; margin-bottom: 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,.65); cursor: pointer; transition: all .15s; margin-bottom: 2px; border: none; background: none; width: 100%; text-align: left; }
 .nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
 .nav-item.active { background: var(--primary); color: #fff; }
 .nav-item svg { width: 17px; height: 17px; opacity: .8; }
 .nav-item.active svg { opacity: 1; }
 
-.main-content {
-  margin-left: var(--sidebar-w);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
+.main-content { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
 
-/* Top bar */
-.topbar {
-  height: var(--header-h);
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center;
-  padding: 0 28px;
-  gap: 16px;
-  position: sticky; top: 0; z-index: 50;
-  box-shadow: var(--shadow);
-}
-
-.topbar-title {
-  font-size: 16px; font-weight: 600; color: var(--text);
-}
-
-.topbar-subtitle {
-  font-size: 13px; color: var(--text3); margin-left: 4px;
-}
-
+.topbar { height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow); }
+.topbar-title { font-size: 16px; font-weight: 600; color: var(--text); }
 .topbar-spacer { flex: 1; }
-
-.status-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 500;
-  padding: 5px 12px; border-radius: 20px;
-}
-
+.status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px; }
 .status-badge.connected { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-bd); }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.topbar-sede-indicator { font-size: 12px; background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-bd); border-radius: 20px; padding: 4px 12px; font-weight: 600; }
 
-/* Page content */
 .page { display: none; padding: 24px 28px 40px; }
 .page.active { display: block; }
 
-/* ══════════════════════════════════════════════
-   COMPONENTES UI REUTILIZABLES
-══════════════════════════════════════════════ */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  box-shadow: var(--shadow);
-  margin-bottom: 20px;
-}
-
-.card-header {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.card-icon {
-  width: 38px; height: 38px; border-radius: var(--radius-sm);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-
+/* ══ CARDS ══ */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.card-icon { width: 38px; height: 38px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .card-icon.blue { background: var(--primary-light); }
 .card-icon.blue svg { fill: var(--primary); }
 .card-icon.green { background: var(--success-bg); }
 .card-icon.green svg { fill: var(--success); }
 .card-icon svg { width: 18px; height: 18px; }
-
 .card-title { font-size: 15px; font-weight: 600; color: var(--text); }
 .card-subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
-.section-heading {
-  font-size: 13px; font-weight: 600; color: var(--text2);
-  text-transform: uppercase; letter-spacing: .05em;
-  margin-bottom: 12px; margin-top: 4px;
-}
-
+/* ══ FORM FIELDS ══ */
 .field { margin-bottom: 16px; }
 .field:last-child { margin-bottom: 0; }
-
-.field label {
-  display: block; font-size: 12px; font-weight: 600;
-  color: var(--text2); text-transform: uppercase;
-  letter-spacing: .05em; margin-bottom: 6px;
-}
-
+.field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
 .field label .req { color: var(--primary); margin-left: 2px; }
 .field label .opt { color: var(--text3); font-weight: 400; font-size: 11px; text-transform: none; letter-spacing: 0; margin-left: 4px; }
 
-input[type="text"], input[type="number"], input[type="date"],
-select, textarea {
-  width: 100%;
-  padding: 9px 12px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  outline: none;
-  transition: border-color .15s, box-shadow .15s;
-  appearance: none; -webkit-appearance: none;
+input[type="text"], input[type="number"], input[type="date"], select, textarea {
+  width: 100%; padding: 9px 12px; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text);
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  outline: none; transition: border-color .15s, box-shadow .15s; appearance: none; -webkit-appearance: none;
 }
-
-input:focus, select:focus, textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37,99,235,.12);
-}
-
-input[readonly] {
-  background: var(--surface2);
-  color: var(--text2);
-  cursor: default;
-}
-
-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a95a8' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
-}
-
+input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+input[readonly] { background: var(--surface2); color: var(--text2); cursor: default; }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a95a8' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
 textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-@media (max-width: 640px) {
-  .row2, .row3 { grid-template-columns: 1fr; }
-}
-
+@media (max-width: 640px) { .row2, .row3 { grid-template-columns: 1fr; } }
 .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
 
-/* Buttons */
-.btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 9px 18px;
-  font-family: 'Inter', sans-serif;
-  font-size: 13.5px; font-weight: 500;
-  border: none; border-radius: var(--radius-sm);
-  cursor: pointer; transition: all .15s;
-}
-
+/* ══ BUTTONS ══ */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 500; border: none; border-radius: var(--radius-sm); cursor: pointer; transition: all .15s; }
 .btn svg { width: 16px; height: 16px; }
 .btn-primary { background: var(--primary); color: #fff; }
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
-
 .btn-success { background: var(--success); color: #fff; }
 .btn-success:hover { filter: brightness(1.1); }
 .btn-success:disabled { opacity: .4; cursor: not-allowed; }
-
-.btn-outline {
-  background: var(--surface); color: var(--text2);
-  border: 1.5px solid var(--border);
-}
+.btn-outline { background: var(--surface); color: var(--text2); border: 1.5px solid var(--border); }
 .btn-outline:hover { border-color: var(--border2); color: var(--text); }
-
-.btn-danger { background: var(--danger); color: #fff; }
-.btn-danger:hover { filter: brightness(1.1); }
-
-.btn-ghost {
-  background: none; color: var(--text3);
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  width: 28px; height: 28px; padding: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; line-height: 1;
-}
-.btn-ghost:hover { color: var(--danger); border-color: var(--danger); background: var(--danger-bg); }
-
 .btn-full { width: 100%; justify-content: center; padding: 11px; font-size: 14px; }
 
-/* Messages */
-.msg {
-  padding: 12px 16px; border-radius: var(--radius-sm);
-  font-size: 13.5px; display: none; margin-top: 14px;
-  font-weight: 500;
-}
+/* ══ MESSAGES ══ */
+.msg { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13.5px; display: none; margin-top: 14px; font-weight: 500; }
 .msg-success { background: var(--success-bg); border: 1px solid var(--success-bd); color: var(--success); }
 .msg-error   { background: var(--danger-bg);  border: 1px solid var(--danger-bd);  color: var(--danger); }
 
-/* Badge */
-.badge {
-  display: inline-flex; align-items: center;
-  font-size: 11px; font-weight: 600; padding: 3px 10px;
-  border-radius: 20px; text-transform: uppercase; letter-spacing: .04em;
-}
-.badge-blue    { background: var(--primary-light); color: var(--primary); }
-.badge-green   { background: var(--success-bg);    color: var(--success); }
-.badge-warning { background: var(--warning-bg);    color: var(--warning); }
-.badge-danger  { background: var(--danger-bg);     color: var(--danger); }
-.badge-gray    { background: var(--surface3);      color: var(--text3); }
+/* ══ BADGES ══ */
+.badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: .04em; }
+.badge-blue { background: var(--primary-light); color: var(--primary); }
+.count-badge { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text3); background: var(--surface3); border: 1px solid var(--border); border-radius: 20px; padding: 2px 10px; }
 
-/* Count badge */
-.count-badge {
-  font-size: 12px; font-family: 'JetBrains Mono', monospace;
-  color: var(--text3); background: var(--surface3);
-  border: 1px solid var(--border); border-radius: 20px; padding: 2px 10px;
-}
-
-/* ══════════════════════════════════════════════
-   PRODUCT CARDS
-══════════════════════════════════════════════ */
+/* ══ PRODUCT CARDS ══ */
 .products-list { display: flex; flex-direction: column; gap: 16px; }
-
-.product-card {
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  position: relative;
-  animation: fadeUp .2s ease;
-}
-
+.product-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; animation: fadeUp .2s ease; }
 .product-card:focus-within { border-color: var(--primary-bd); }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.card-num {
-  font-size: 11px; font-family: 'JetBrains Mono', monospace;
-  color: var(--text3); margin-bottom: 16px;
-  text-transform: uppercase; letter-spacing: .06em;
-  display: flex; align-items: center; gap: 8px;
-}
-
-.remove-btn {
-  position: absolute; top: 16px; right: 16px;
-  width: 28px; height: 28px;
-  background: none; border: 1.5px solid var(--border);
-  border-radius: 50%; cursor: pointer; font-size: 16px;
-  color: var(--text3); display: flex; align-items: center;
-  justify-content: center; line-height: 1; transition: all .15s;
-}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.card-num { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text3); margin-bottom: 16px; text-transform: uppercase; letter-spacing: .06em; display: flex; align-items: center; gap: 8px; }
+.remove-btn { position: absolute; top: 16px; right: 16px; width: 28px; height: 28px; background: none; border: 1.5px solid var(--border); border-radius: 50%; cursor: pointer; font-size: 16px; color: var(--text3); display: flex; align-items: center; justify-content: center; transition: all .15s; }
 .remove-btn:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
 
-.unit-display {
-  padding: 9px 12px;
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  min-height: 40px;
-  display: flex; align-items: center;
-  font-weight: 500; color: var(--primary);
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.unit-display.empty { color: var(--text3); font-style: italic; font-family: 'Inter', sans-serif; font-weight: 400; font-size: 13px; }
+/* Unidad display */
+.unit-display { padding: 9px 12px; background: var(--primary-light); border: 1.5px solid var(--primary-bd); border-radius: var(--radius-sm); font-size: 14px; min-height: 40px; display: flex; align-items: center; font-weight: 600; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
+.unit-display.empty { background: var(--surface2); border-color: var(--border); color: var(--text3); font-style: italic; font-family: 'Inter', sans-serif; font-weight: 400; font-size: 13px; }
 
 /* Add button */
-.add-btn {
-  width: 100%; padding: 12px;
-  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
-  color: var(--primary);
-  background: var(--primary-light);
-  border: 1.5px dashed var(--primary-bd);
-  border-radius: var(--radius); cursor: pointer;
-  transition: all .15s; margin-top: 4px;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
+.add-btn { width: 100%; padding: 12px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; color: var(--primary); background: var(--primary-light); border: 1.5px dashed var(--primary-bd); border-radius: var(--radius); cursor: pointer; transition: all .15s; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .add-btn:hover { background: var(--primary); color: #fff; border-style: solid; }
+.add-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-/* ══════════════════════════════════════════════
-   HISTORIAL / TABLA
-══════════════════════════════════════════════ */
-.hist-toolbar {
-  display: flex; align-items: center; gap: 12px;
-  flex-wrap: wrap; margin-bottom: 16px;
-}
-
-.filter-group {
-  display: flex; align-items: center; gap: 8px;
-  flex-wrap: wrap;
-}
-
-.filter-select {
-  padding: 7px 32px 7px 10px;
-  font-size: 13px; border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text2);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a95a8' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 8px center;
-  appearance: none; -webkit-appearance: none; cursor: pointer;
-  font-family: 'Inter', sans-serif;
-}
-
+/* ══ HISTORIAL TABLE ══ */
+.hist-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.filter-select { padding: 7px 32px 7px 10px; font-size: 13px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text2); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a95a8' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; appearance: none; -webkit-appearance: none; cursor: pointer; font-family: 'Inter', sans-serif; }
 .filter-select:focus { outline: none; border-color: var(--primary); }
-
-.search-input {
-  padding: 7px 12px;
-  font-size: 13px; border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm); background: var(--surface);
-  color: var(--text); font-family: 'Inter', sans-serif; outline: none;
-  min-width: 200px;
-}
+.search-input { padding: 7px 12px; font-size: 13px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-family: 'Inter', sans-serif; outline: none; min-width: 200px; }
 .search-input:focus { border-color: var(--primary); }
-
 .hist-table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
-
-.hist-table {
-  width: 100%; border-collapse: collapse;
-  font-size: 13.5px;
-}
-
-.hist-table thead th {
-  background: var(--surface2);
-  padding: 10px 14px;
-  text-align: left;
-  font-size: 11px; font-weight: 600; color: var(--text3);
-  text-transform: uppercase; letter-spacing: .05em;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.hist-table tbody tr {
-  border-bottom: 1px solid var(--border);
-  transition: background .12s;
-  cursor: pointer;
-}
+.hist-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.hist-table thead th { background: var(--surface2); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.hist-table tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; cursor: pointer; }
 .hist-table tbody tr:last-child { border-bottom: none; }
 .hist-table tbody tr:hover { background: var(--primary-light); }
 .hist-table tbody tr.selected-row { background: var(--primary-light); outline: 2px solid var(--primary); }
+.hist-table td { padding: 10px 14px; vertical-align: middle; color: var(--text); white-space: nowrap; }
+.hist-table td.code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text3); }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
 
-.hist-table td {
-  padding: 10px 14px; vertical-align: middle;
-  color: var(--text); white-space: nowrap;
-}
-
-.hist-table td.code {
-  font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text3);
-}
-
-.empty-state {
-  text-align: center; padding: 40px 20px;
-  color: var(--text3); font-size: 14px;
-}
-
-.empty-state svg { width: 48px; height: 48px; fill: var(--border2); margin-bottom: 12px; display: block; margin: 0 auto 12px; }
-
-/* CSV download area */
-.csv-panel {
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 16px 20px;
-  margin-top: 16px; display: none;
-}
+/* CSV panel */
+.csv-panel { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-top: 16px; display: none; }
 .csv-panel.visible { display: block; }
 
-/* ══════════════════════════════════════════════
-   LOADING SPINNER
-══════════════════════════════════════════════ */
-.spinner {
-  display: inline-block; width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,.4);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-}
+/* Spinner */
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ══════════════════════════════════════════════
-   RESPONSIVE — MOBILE
-══════════════════════════════════════════════ */
+/* Mobile */
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); transition: transform .25s; }
   .sidebar.open { transform: translateX(0); }
   .main-content { margin-left: 0; }
   .topbar { padding: 0 16px; }
   .page { padding: 16px 16px 40px; }
-  .menu-toggle { display: flex; }
+  .menu-toggle { display: flex !important; }
 }
-
-.menu-toggle {
-  display: none; width: 36px; height: 36px;
-  background: none; border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm); cursor: pointer;
-  align-items: center; justify-content: center;
-}
-
-.topbar-sede-indicator {
-  font-size: 12px; background: var(--primary-light);
-  color: var(--primary); border: 1px solid var(--primary-bd);
-  border-radius: 20px; padding: 4px 12px; font-weight: 600;
-}
-
-.overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.4); z-index: 99;
-}
+.menu-toggle { display: none; width: 36px; height: 36px; background: none; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; align-items: center; justify-content: center; }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 99; }
 .overlay.open { display: block; }
 </style>
 </head>
 <body>
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
-<!-- ════════ SIDEBAR ════════ -->
 <div class="layout">
+<!-- ════ SIDEBAR ════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="sidebar-logo">
@@ -532,7 +211,6 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
       </div>
     </div>
   </div>
-
   <nav class="nav-section">
     <div class="nav-section-label">Módulos</div>
     <button class="nav-item active" id="nav-form" onclick="showPage('form')">
@@ -544,62 +222,39 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
       Historial de Reportes
     </button>
   </nav>
-
   <div style="flex:1"></div>
-  <div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:rgba(255,255,255,.35);">
-    Conectado a Google Sheets
-  </div>
+  <div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:rgba(255,255,255,.35);">Conectado a Google Sheets</div>
 </aside>
 
-<!-- ════════ MAIN ════════ -->
+<!-- ════ MAIN ════ -->
 <div class="main-content">
-
-  <!-- Topbar -->
   <header class="topbar">
     <button class="menu-toggle" onclick="toggleSidebar()">
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="var(--text2)"><path d="M3 5h14M3 10h14M3 15h14" stroke="var(--text2)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <svg width="18" height="18" viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14" stroke="var(--text2)" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
     </button>
-    <div>
-      <span class="topbar-title" id="topbar-title">Registrar Reporte</span>
-    </div>
+    <span class="topbar-title" id="topbar-title">Registrar Reporte</span>
     <div class="topbar-spacer"></div>
     <div id="topbar-sede" class="topbar-sede-indicator" style="display:none">—</div>
-    <div class="status-badge connected">
-      <span class="status-dot"></span>
-      <span>Sheets conectado</span>
-    </div>
+    <div class="status-badge connected"><span class="status-dot"></span><span>Sheets conectado</span></div>
   </header>
 
-  <!-- ═══ PÁGINA: FORMULARIO ═══ -->
+  <!-- ═══ PÁGINA FORMULARIO ═══ -->
   <div class="page active" id="page-form">
     <div class="card">
       <div class="card-header">
-        <div class="card-icon blue">
-          <svg viewBox="0 0 20 20"><path d="M4 4h12v2H4zm0 4h12v2H4zm0 4h7v2H4z"/></svg>
-        </div>
-        <div>
-          <div class="card-title">Información del Reporte</div>
-          <div class="card-subtitle">Datos generales de la sede y responsable</div>
-        </div>
+        <div class="card-icon blue"><svg viewBox="0 0 20 20"><path d="M4 4h12v2H4zm0 4h12v2H4zm0 4h7v2H4z"/></svg></div>
+        <div><div class="card-title">Información del Reporte</div><div class="card-subtitle">Datos generales de la sede y responsable</div></div>
       </div>
-
-      <!-- Fila 1: Sede + Punto de Venta -->
       <div class="row2">
         <div class="field">
           <label>Restaurante / Sede <span class="req">*</span></label>
-          <select id="sede" onchange="onSedeChange()">
-            <option value="">Cargando sedes...</option>
-          </select>
+          <select id="sede" onchange="onSedeChange()"><option value="">Cargando sedes...</option></select>
         </div>
         <div class="field">
           <label>Punto de Venta <span class="req">*</span></label>
-          <select id="puntoVenta">
-            <option value="">Selecciona la sede primero</option>
-          </select>
+          <select id="puntoVenta"><option value="">Selecciona la sede primero</option></select>
         </div>
       </div>
-
-      <!-- Fila 2: Fecha + Responsable -->
       <div class="row2">
         <div class="field">
           <label>Fecha del Reporte <span class="req">*</span></label>
@@ -612,36 +267,27 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
       </div>
     </div>
 
-    <!-- Productos -->
     <div class="card">
       <div class="card-header">
-        <div class="card-icon blue">
-          <svg viewBox="0 0 20 20"><path d="M3 3h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 3v9h12V6H4zm2 2h8v1.5H6V8zm0 3h8v1.5H6V11zm0 3h5v1.5H6V14z"/></svg>
-        </div>
-        <div style="flex:1">
-          <div class="card-title">Productos a Reportar</div>
-          <div class="card-subtitle" id="catalog-status">Selecciona una sede para cargar el catálogo</div>
-        </div>
+        <div class="card-icon blue"><svg viewBox="0 0 20 20"><path d="M3 3h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 3v9h12V6H4zm2 2h8v1.5H6V8zm0 3h8v1.5H6V11zm0 3h5v1.5H6V14z"/></svg></div>
+        <div style="flex:1"><div class="card-title">Productos a Reportar</div><div class="card-subtitle" id="catalog-status">Selecciona una sede para cargar el catálogo</div></div>
         <span class="count-badge" id="contador">0 productos</span>
       </div>
-
       <div class="products-list" id="productsList"></div>
-
       <button class="add-btn" onclick="addProduct()" id="addBtn" disabled>
         <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M10 4a1 1 0 0 1 1 1v4h4a1 1 0 0 1 0 2h-4v4a1 1 0 0 1-2 0v-4H5a1 1 0 0 1 0-2h4V5a1 1 0 0 1 1-1z"/></svg>
         Agregar Producto
       </button>
     </div>
 
-    <!-- Acciones -->
     <div class="card">
       <div class="row2">
         <button class="btn btn-success btn-full" id="saveBtn" onclick="saveReport()">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M16 4H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM5 5h7v4H5V5zm8 10H7v-3h6v3zm2 0h-1v-4H6v4H5v-4H4v4H3V6h14v9h-2z"/></svg>
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 4h8l3 3v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm4 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-10H8v3h4V4z"/></svg>
           Guardar en Google Sheets
         </button>
         <button class="btn btn-primary btn-full" id="submitBtn" onclick="submitReport()">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.94 6.94A10 10 0 0 1 17.07 17M3 17l4-4m9-9-4 4"/></svg>
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm3.5 7l3-4 2 2.5 2.5-3 3 4.5H5.5z"/></svg>
           Enviar por Correo
         </button>
       </div>
@@ -650,63 +296,40 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
     </div>
   </div>
 
-  <!-- ═══ PÁGINA: HISTORIAL ═══ -->
+  <!-- ═══ PÁGINA HISTORIAL ═══ -->
   <div class="page" id="page-historial">
     <div class="card">
       <div class="card-header">
-        <div class="card-icon green">
-          <svg viewBox="0 0 20 20"><path d="M3 5h2V3a1 1 0 0 1 2 0v2h6V3a1 1 0 0 1 2 0v2h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 4v7h14V9H3z"/></svg>
-        </div>
-        <div style="flex:1">
-          <div class="card-title">Historial de Reportes</div>
-          <div class="card-subtitle">Todos los reportes registrados en Google Sheets</div>
-        </div>
+        <div class="card-icon green"><svg viewBox="0 0 20 20"><path d="M3 5h2V3a1 1 0 0 1 2 0v2h6V3a1 1 0 0 1 2 0v2h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 4v7h14V9H3z"/></svg></div>
+        <div style="flex:1"><div class="card-title">Historial de Reportes</div><div class="card-subtitle">Todos los reportes registrados en Google Sheets</div></div>
         <button class="btn btn-outline" onclick="loadHistorial()" style="font-size:12px;padding:6px 12px;">
           <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M4 10a6 6 0 0 1 6-6c1.8 0 3.4.8 4.5 2H13a1 1 0 0 0 0 2h4a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1.5A8 8 0 0 0 2 10a1 1 0 0 0 2 0z"/></svg>
           Actualizar
         </button>
       </div>
-
-      <!-- Filtros -->
       <div class="hist-toolbar">
-        <div class="filter-group">
+        <div style="display:flex;align-items:center;gap:8px;">
           <label style="font-size:12px;font-weight:600;color:var(--text3);">Sede:</label>
-          <select class="filter-select" id="filtroSede" onchange="applyFilters()">
-            <option value="">Todas las sedes</option>
-          </select>
+          <select class="filter-select" id="filtroSede" onchange="applyFilters()"><option value="">Todas las sedes</option></select>
         </div>
-        <div class="filter-group">
+        <div style="display:flex;align-items:center;gap:8px;">
           <label style="font-size:12px;font-weight:600;color:var(--text3);">Producto:</label>
           <input type="text" class="search-input" id="filtroProducto" placeholder="Buscar por nombre o código..." oninput="applyFilters()" />
         </div>
         <div style="flex:1"></div>
         <span class="count-badge" id="histCount">0 registros</span>
       </div>
-
-      <!-- Tabla -->
       <div class="hist-table-wrap">
         <table class="hist-table" id="histTable">
           <thead>
             <tr>
-              <th>Sede</th>
-              <th>Punto de Venta</th>
-              <th>Fecha</th>
-              <th>Responsable</th>
-              <th>Producto</th>
-              <th>Código</th>
-              <th>Unidad</th>
-              <th>Cantidad</th>
-              <th>Motivo</th>
-              <th>Notas</th>
+              <th>Sede</th><th>Punto de Venta</th><th>Fecha</th><th>Responsable</th>
+              <th>Producto</th><th>Código</th><th>Unidad</th><th>Cantidad</th><th>Motivo</th><th>Notas</th>
             </tr>
           </thead>
-          <tbody id="histBody">
-            <tr><td colspan="10" class="empty-state">Cargando reportes...</td></tr>
-          </tbody>
+          <tbody id="histBody"><tr><td colspan="10" class="empty-state">Cargando reportes...</td></tr></tbody>
         </table>
       </div>
-
-      <!-- Panel CSV -->
       <div class="csv-panel" id="csvPanel">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
           <div>
@@ -734,37 +357,26 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwaIFtfgYgKUGzuIn41tFWg7uY-2mR0RkEWbJqj0ben1WVNmzrkk20tDDgs66VTIlNwAw/exec';
 const SHEET_ID   = '1EFtVAYEgpmsYkL4CgpAubo-LqjRvBAKBGmr3g-tekDA';
 
-// IDs de las hojas en Google Sheets
-const SHEETS = {
-  SEDE:    'SEDE',
-  MALANGA: 'MALANGA',
-  ROCOTO:  'ROCOTO',
-  MOTIVOS: 'MOTIVOS%20',   // con espacio al final
-  REPORTES:'Reportes'
-};
-
-// Mapeo sede -> hoja de catálogo
-const SEDE_SHEET = {
-  'MALANGA': 'MALANGA',
-  'ROCOTO':  'ROCOTO'
-};
-
 // ════════════════════════════════════════════
 // ESTADO GLOBAL
 // ════════════════════════════════════════════
-let sedesData    = [];   // [{sede, puntoVenta}]
-let catalogData  = [];   // [{ref, nombre, familia, subfamilia, unidadMedida}]
-let motivosData  = [];   // [string]
-let historialData= [];   // filas completas de Sheets
-let filteredData = [];   // datos filtrados para tabla
-let selectedRows = new Set(); // filas seleccionadas en historial
+let sedesData    = [];
+let motivosData  = [];
+let historialData= [];
+let filteredData = [];
+let selectedRows = new Set();
+
+// Catálogo actual (MALANGA o ROCOTO)
+// Estructura: Map<nombre, { ref, unidad }>
+// Columnas de la BD: A=Código, B=Nombre, C=Unidad de Medida
+let PROD_MAP = new Map();
+let ALL_PRODUCTS = []; // [{nombre, ref}] para datalist
+let currentCatalogKey = '';
 
 let products = [];
 let cardData  = {};
 let counter   = 0;
-
-let currentSede     = '';
-let currentCatalogKey = ''; // MALANGA o ROCOTO
+let currentSede = '';
 
 // ════════════════════════════════════════════
 // NAVEGACIÓN
@@ -779,7 +391,6 @@ function showPage(name) {
   if (name === 'historial') loadHistorial();
   closeSidebar();
 }
-
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
@@ -790,190 +401,144 @@ function closeSidebar() {
 }
 
 // ════════════════════════════════════════════
-// CSV HELPER (Google Sheets export)
+// HELPER: FETCH CSV
 // ════════════════════════════════════════════
 async function fetchCSV(sheetName) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.text();
 }
 
 function parseCSV(text) {
-  const lines = text.split('\n').filter(l => l.trim());
-  return lines.map(line => {
-    const cols = [];
-    let cur = '', inQ = false;
+  return text.split('\n').filter(l => l.trim()).map(line => {
+    const cols = []; let cur = '', inQ = false;
     for (let i = 0; i < line.length; i++) {
       if (line[i] === '"') { inQ = !inQ; }
       else if (line[i] === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
       else { cur += line[i]; }
     }
-    cols.push(cur.trim());
-    return cols;
+    cols.push(cur.trim()); return cols;
   });
 }
 
 // ════════════════════════════════════════════
-// CARGA INICIAL — SEDES
+// CARGA DE SEDES (hoja SEDE)
 // ════════════════════════════════════════════
 async function loadSedes() {
   try {
-    const csv = await fetchCSV('SEDE');
-    const rows = parseCSV(csv);
+    const rows = parseCSV(await fetchCSV('SEDE'));
     sedesData = [];
-    rows.forEach((cols, i) => {
-      if (i === 0) return; // skip header
+    // Saltar encabezado si primera fila no es dato
+    const start = (rows[0] && rows[0][0] && isNaN(Number(rows[0][0])) && !rows[0][0].match(/^[A-Z]{2,}/)) ? 1 : 0;
+    rows.slice(start).forEach(cols => {
+      const sede = (cols[0] || '').trim();
+      const pv   = (cols[1] || '').trim();
+      if (sede) sedesData.push({ sede, puntoVenta: pv });
+    });
+    // Si start=1 eliminó datos reales, reintentar desde 0
+    if (!sedesData.length) rows.forEach(cols => {
       const sede = (cols[0] || '').trim();
       const pv   = (cols[1] || '').trim();
       if (sede) sedesData.push({ sede, puntoVenta: pv });
     });
 
-    // Si no hay encabezado, tomar todo
-    if (!sedesData.length) {
-      rows.forEach(cols => {
-        const sede = (cols[0] || '').trim();
-        const pv   = (cols[1] || '').trim();
-        if (sede) sedesData.push({ sede, puntoVenta: pv });
-      });
-    }
+    const names = [...new Set(sedesData.map(d => d.sede))];
+    const sel = document.getElementById('sede');
+    sel.innerHTML = '<option value="">Selecciona una sede...</option>' +
+      names.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
 
-    // Poblar select de sedes
-    const sedeNames = [...new Set(sedesData.map(d => d.sede))];
-    const sedeSel = document.getElementById('sede');
-    sedeSel.innerHTML = '<option value="">Selecciona una sede...</option>' +
-      sedeNames.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
-
-    // Poblar filtro en historial
-    const filtroSede = document.getElementById('filtroSede');
-    filtroSede.innerHTML = '<option value="">Todas las sedes</option>' +
-      sedeNames.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
-
+    // Filtro historial
+    const fs = document.getElementById('filtroSede');
+    fs.innerHTML = '<option value="">Todas las sedes</option>' +
+      names.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
   } catch(e) {
-    console.error('Error cargando sedes:', e);
+    console.error('Error sedes:', e);
     document.getElementById('sede').innerHTML = '<option value="">Error cargando sedes</option>';
   }
 }
 
 // ════════════════════════════════════════════
-// CARGA DE MOTIVOS
+// CARGA DE MOTIVOS (hoja MOTIVOS)
 // ════════════════════════════════════════════
 async function loadMotivos() {
   try {
-    const csv = await fetchCSV('MOTIVOS%20');
-    const rows = parseCSV(csv);
-    motivosData = rows.map(r => (r[0] || '').trim()).filter(m => m && m !== 'MOTIVO');
+    const rows = parseCSV(await fetchCSV('MOTIVOS '));
+    motivosData = rows.map(r => (r[0] || '').trim()).filter(m => m && m.toUpperCase() !== 'MOTIVO');
   } catch(e) {
-    // Fallback
     motivosData = ['MOTIVO','ROTACION','COBRO','VENCIMIENTO','DAÑO DE NEVERA','MERMA','BAJA','DEVOLUCION DEL CLIENTE','FOTOS','CAPACITACION','PRUEBA DE CALIDAD'];
-    console.warn('Usando motivos fallback:', e);
+    console.warn('Motivos fallback:', e);
   }
 }
 
 // ════════════════════════════════════════════
-// CAMBIO DE SEDE
+// CAMBIO DE SEDE → carga catálogo correcto
 // ════════════════════════════════════════════
 async function onSedeChange() {
   const sede = document.getElementById('sede').value;
   currentSede = sede;
 
-  // Actualizar indicador en topbar
-  const indicator = document.getElementById('topbar-sede');
-  if (sede) {
-    indicator.textContent = sede;
-    indicator.style.display = 'inline-flex';
-  } else {
-    indicator.style.display = 'none';
-  }
+  // Topbar indicator
+  const ind = document.getElementById('topbar-sede');
+  ind.textContent = sede || '—';
+  ind.style.display = sede ? 'inline-flex' : 'none';
 
-  // Poblar puntos de venta
+  // Punto de venta
   const pvSel = document.getElementById('puntoVenta');
   const pvs = sedesData.filter(d => d.sede === sede).map(d => d.puntoVenta).filter(Boolean);
-  if (pvs.length) {
-    pvSel.innerHTML = '<option value="">Selecciona punto de venta...</option>' +
-      pvs.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
-  } else {
-    pvSel.innerHTML = '<option value="">Sin puntos de venta definidos</option>';
-  }
+  pvSel.innerHTML = pvs.length
+    ? '<option value="">Selecciona punto de venta...</option>' + pvs.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('')
+    : '<option value="">Sin puntos de venta definidos</option>';
 
-  // Determinar qué catálogo cargar
-  const sedeUpper = sede.toUpperCase();
-  let catalogKey = '';
-  if (sedeUpper.includes('MALANGA')) catalogKey = 'MALANGA';
-  else if (sedeUpper.includes('ROCOTO') || sedeUpper.includes('HOT') || sedeUpper.includes('PLANTA')) catalogKey = 'ROCOTO';
-  else catalogKey = 'ROCOTO'; // default
+  // Determinar qué hoja de catálogo usar
+  const up = sede.toUpperCase();
+  const catalogKey = up.includes('MALANGA') ? 'MALANGA' : 'ROCOTO';
 
-  if (catalogKey && catalogKey !== currentCatalogKey) {
+  if (catalogKey !== currentCatalogKey) {
     await loadCatalog(catalogKey);
   }
 
-  // Habilitar botón agregar
+  // Habilitar botón
   const addBtn = document.getElementById('addBtn');
-  if (sede) {
-    addBtn.disabled = false;
-    addBtn.textContent = '';
-    addBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M10 4a1 1 0 0 1 1 1v4h4a1 1 0 0 1 0 2h-4v4a1 1 0 0 1-2 0v-4H5a1 1 0 0 1 0-2h4V5a1 1 0 0 1 1-1z"/></svg> Agregar Producto`;
-  } else {
-    addBtn.disabled = true;
-  }
+  addBtn.disabled = !sede;
 
-  // Re-render cards para actualizar datalists
+  // Refresh cards si hay productos
   if (products.length) renderProducts();
 }
 
 // ════════════════════════════════════════════
-// CARGA DE CATÁLOGO (MALANGA / ROCOTO)
+// CARGA DEL CATÁLOGO
+// Columnas: A = Código de barras, B = Nombre, C = Unidad de Medida
 // ════════════════════════════════════════════
-let PROD_MAP = new Map();
-let FAMILIAS = [];
-let FAM_TO_SUB = {};
-let PROD_BY_FAM = {};
-let PROD_BY_SUB = {};
-
 async function loadCatalog(sheetName) {
   const statusEl = document.getElementById('catalog-status');
   statusEl.textContent = 'Cargando catálogo ' + sheetName + '...';
+
   try {
-    const csv = await fetchCSV(sheetName);
-    const rows = parseCSV(csv);
+    const rows = parseCSV(await fetchCSV(sheetName));
+    PROD_MAP     = new Map();
+    ALL_PRODUCTS = [];
 
-    // Limpiar estado previo
-    PROD_MAP   = new Map();
-    FAMILIAS   = [];
-    FAM_TO_SUB = {};
-    PROD_BY_FAM= {};
-    PROD_BY_SUB= {};
-
-    // Detectar si hay encabezado
-    const startRow = (rows[0] && isNaN(Number(rows[0][0]))) ? 1 : 0;
+    // Detectar si hay encabezado en fila 0
+    const firstRow = rows[0] || [];
+    const hasHeader = firstRow[0] && isNaN(Number(firstRow[0])) && firstRow[0].length > 8;
+    const startRow  = hasHeader ? 1 : 0;
 
     rows.slice(startRow).forEach(cols => {
-      const ref        = (cols[0] || '').trim();
-      const nombre     = (cols[1] || '').trim();
-      const familia    = (cols[2] || '').trim();
-      const subfamilia = (cols[3] || '').trim();
-      const unidad     = (cols[4] || '').trim();
+      // Col A (idx 0) = Código de barras / referencia
+      // Col B (idx 1) = Nombre del producto
+      // Col C (idx 2) = Unidad de Medida
+      const ref    = (cols[0] || '').trim();
+      const nombre = (cols[1] || '').trim();
+      const unidad = (cols[2] || '').trim();   // ← COLUMNA C = Unidad de Medida
       if (!nombre) return;
-
-      if (familia && !FAMILIAS.includes(familia)) FAMILIAS.push(familia);
-      if (familia && subfamilia) {
-        if (!FAM_TO_SUB[familia]) FAM_TO_SUB[familia] = [];
-        if (!FAM_TO_SUB[familia].includes(subfamilia)) FAM_TO_SUB[familia].push(subfamilia);
-      }
-      if (familia) {
-        if (!PROD_BY_FAM[familia]) PROD_BY_FAM[familia] = [];
-        PROD_BY_FAM[familia].push({ nombre, ref });
-      }
-      if (subfamilia) {
-        if (!PROD_BY_SUB[subfamilia]) PROD_BY_SUB[subfamilia] = [];
-        PROD_BY_SUB[subfamilia].push({ nombre, ref });
-      }
-      PROD_MAP.set(nombre, { nombre, ref, unidad });
+      PROD_MAP.set(nombre, { ref, unidad });
+      ALL_PRODUCTS.push({ nombre, ref });
     });
 
-    FAMILIAS.sort();
     currentCatalogKey = sheetName;
     statusEl.textContent = sheetName + ' — ' + PROD_MAP.size + ' productos cargados';
+
     if (products.length) renderProducts();
   } catch(e) {
     statusEl.textContent = 'Error cargando catálogo: ' + e.message;
@@ -989,7 +554,7 @@ function addProduct() {
   counter++;
   const id = counter;
   products.push(id);
-  cardData[id] = { nombre:'', codigo:'', cantidad:'', unidad:'', motivo:'', notas:'', familia:'', subfamilia:'' };
+  cardData[id] = { nombre:'', codigo:'', cantidad:'', unidad:'', motivo:'', notas:'' };
   renderProducts();
   setTimeout(() => {
     const card = document.getElementById('card_'+id);
@@ -1005,15 +570,14 @@ function removeProduct(id) {
 }
 
 function saveCard(id) {
+  const unidEl = document.getElementById('unidad_'+id);
   cardData[id] = {
-    nombre:     document.getElementById('nombre_'+id)?.value || '',
-    codigo:     document.getElementById('codigo_'+id)?.value || '',
-    cantidad:   document.getElementById('cantidad_'+id)?.value || '',
-    unidad:     document.getElementById('unidad_'+id)?.dataset?.value || '',
-    motivo:     document.getElementById('motivo_'+id)?.value || '',
-    notas:      document.getElementById('notas_'+id)?.value || '',
-    familia:    document.getElementById('familia_'+id)?.value || '',
-    subfamilia: document.getElementById('subfamilia_'+id)?.value || ''
+    nombre:   document.getElementById('nombre_'+id)?.value || '',
+    codigo:   document.getElementById('codigo_'+id)?.value || '',
+    cantidad: document.getElementById('cantidad_'+id)?.value || '',
+    unidad:   unidEl ? (unidEl.dataset.value || '') : '',
+    motivo:   document.getElementById('motivo_'+id)?.value || '',
+    notas:    document.getElementById('notas_'+id)?.value || ''
   };
 }
 
@@ -1024,43 +588,18 @@ function renderProducts() {
 
   list.innerHTML = products.map((id, i) => {
     const s = cardData[id] || {};
-    const famOpts = FAMILIAS.map(f =>
-      `<option value="${esc(f)}" ${s.familia===f?'selected':''}>${esc(f)}</option>`
-    ).join('');
-    const subs = s.familia ? (FAM_TO_SUB[s.familia] || []) : [];
-    const subOpts = subs.map(sb =>
-      `<option value="${esc(sb)}" ${s.subfamilia===sb?'selected':''}>${esc(sb)}</option>`
-    ).join('');
     const motivoOpts = motivosData.map(m =>
       `<option value="${esc(m)}" ${s.motivo===m?'selected':''}>${esc(m)}</option>`
     ).join('');
-
-    const unitVal  = s.unidad || '';
+    const unitVal = s.unidad || '';
     const unitHtml = unitVal
       ? `<div class="unit-display">${esc(unitVal)}</div>`
-      : `<div class="unit-display empty">Se autocompletará al elegir el producto</div>`;
+      : `<div class="unit-display empty">Se completará al elegir el producto</div>`;
 
     return `
 <div class="product-card" id="card_${id}">
-  <div class="card-num">
-    <span class="badge badge-blue">Producto ${i+1}</span>
-  </div>
+  <div class="card-num"><span class="badge badge-blue">Producto ${i+1}</span></div>
   <button class="remove-btn" onclick="removeProduct(${id})" title="Eliminar">×</button>
-
-  <div class="row2" style="margin-bottom:14px">
-    <div class="field" style="margin:0">
-      <label>Familia</label>
-      <select id="familia_${id}" onchange="onFamiliaChange(${id})">
-        <option value="">— Todas —</option>${famOpts}
-      </select>
-    </div>
-    <div class="field" style="margin:0">
-      <label>Subfamilia</label>
-      <select id="subfamilia_${id}" onchange="onSubfamiliaChange(${id})">
-        <option value="">— Todas —</option>${subOpts}
-      </select>
-    </div>
-  </div>
 
   <div class="row2" style="margin-bottom:14px">
     <div class="field" style="margin:0">
@@ -1087,8 +626,10 @@ function renderProducts() {
     </div>
     <div class="field" style="margin:0">
       <label>Unidad de Medida</label>
-      <div id="unidad_wrap_${id}" data-value="${esc(unitVal)}">${unitHtml}</div>
-      <input type="hidden" id="unidad_${id}" data-value="${esc(unitVal)}" />
+      <div id="unidad_wrap_${id}">
+        <div id="unidad_display_${id}">${unitHtml}</div>
+        <input type="hidden" id="unidad_${id}" data-value="${esc(unitVal)}" />
+      </div>
     </div>
     <div class="field" style="margin:0">
       <label>Motivo <span class="req">*</span></label>
@@ -1105,80 +646,53 @@ function renderProducts() {
 </div>`;
   }).join('');
 
+  // Poblar datalists
   products.forEach(pid => buildDatalist(pid));
 }
 
 function buildDatalist(id) {
-  const fam = document.getElementById('familia_'+id)?.value || '';
-  const sub = document.getElementById('subfamilia_'+id)?.value || '';
-  let prods = [];
-  if (sub && PROD_BY_SUB[sub]) prods = PROD_BY_SUB[sub];
-  else if (fam && PROD_BY_FAM[fam]) prods = PROD_BY_FAM[fam];
-  else Object.values(PROD_BY_FAM).forEach(arr => prods.push(...arr));
   const dl = document.getElementById('dl_'+id);
   if (!dl) return;
-  dl.innerHTML = prods.map(p =>
+  dl.innerHTML = ALL_PRODUCTS.map(p =>
     `<option value="${esc(p.nombre)}">`
   ).join('');
 }
 
-function onFamiliaChange(id) {
-  saveCard(id);
-  const fa = document.getElementById('familia_'+id)?.value || '';
-  const subSel = document.getElementById('subfamilia_'+id);
-  if (subSel) {
-    const subs = fa ? (FAM_TO_SUB[fa] || []) : [];
-    subSel.innerHTML = '<option value="">— Todas —</option>' +
-      subs.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
-  }
-  buildDatalist(id);
-  document.getElementById('nombre_'+id).value = '';
-  document.getElementById('codigo_'+id).value = '';
-  clearUnit(id);
-}
-
-function onSubfamiliaChange(id) {
-  saveCard(id);
-  buildDatalist(id);
-  document.getElementById('nombre_'+id).value = '';
-  document.getElementById('codigo_'+id).value = '';
-  clearUnit(id);
-}
-
+// ════════════════════════════════════════════
+// AUTOCOMPLETADO: al seleccionar producto
+// lee ref (Col A) y unidad (Col C) desde PROD_MAP
+// ════════════════════════════════════════════
 function onNombreInput(id) { saveCard(id); }
 
 function autoFill(id) {
-  const val  = document.getElementById('nombre_'+id)?.value || '';
+  const val  = (document.getElementById('nombre_'+id)?.value || '').trim();
   const data = PROD_MAP.get(val);
-  const codEl  = document.getElementById('codigo_'+id);
-  const wrapEl = document.getElementById('unidad_wrap_'+id);
-  const hidEl  = document.getElementById('unidad_'+id);
+  const codEl     = document.getElementById('codigo_'+id);
+  const dispEl    = document.getElementById('unidad_display_'+id);
+  const hidEl     = document.getElementById('unidad_'+id);
 
   if (data) {
-    if (codEl) { codEl.value = data.ref; codEl.readOnly = true; }
+    // Rellenar código (Col A)
+    if (codEl) codEl.value = data.ref;
+
+    // Rellenar unidad de medida (Col C)
     const u = (data.unidad || '').trim();
-    if (hidEl) hidEl.dataset.value = u;
-    if (wrapEl) {
-      wrapEl.dataset.value = u;
-      wrapEl.innerHTML = u
+    if (hidEl)  hidEl.dataset.value = u;
+    if (dispEl) {
+      dispEl.innerHTML = u
         ? `<div class="unit-display">${esc(u)}</div>`
-        : `<div class="unit-display empty">Sin unidad definida</div>`;
+        : `<div class="unit-display empty">Sin unidad definida en la base</div>`;
     }
   } else {
-    if (codEl) { codEl.value = ''; codEl.readOnly = false; }
-    clearUnit(id);
+    if (codEl) codEl.value = '';
+    if (hidEl)  hidEl.dataset.value = '';
+    if (dispEl) {
+      dispEl.innerHTML = val
+        ? `<div class="unit-display empty">Producto no encontrado en catálogo</div>`
+        : `<div class="unit-display empty">Se completará al elegir el producto</div>`;
+    }
   }
   saveCard(id);
-}
-
-function clearUnit(id) {
-  const hidEl  = document.getElementById('unidad_'+id);
-  const wrapEl = document.getElementById('unidad_wrap_'+id);
-  if (hidEl) hidEl.dataset.value = '';
-  if (wrapEl) {
-    wrapEl.dataset.value = '';
-    wrapEl.innerHTML = '<div class="unit-display empty">Se autocompletará al elegir el producto</div>';
-  }
 }
 
 // ════════════════════════════════════════════
@@ -1208,7 +722,7 @@ async function saveReport() {
   if (err) { showMsg('error', err); return; }
 
   const btn = document.getElementById('saveBtn');
-  const origText = btn.innerHTML;
+  const orig = btn.innerHTML;
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Guardando...';
   hideMsg();
@@ -1220,14 +734,12 @@ async function saveReport() {
     puntoVenta:   document.getElementById('puntoVenta').value,
     encargado:    document.getElementById('encargado').value.trim(),
     productos: products.map(id => ({
-      nombre:     cardData[id].nombre,
-      codigo:     cardData[id].codigo,
-      familia:    cardData[id].familia,
-      subfamilia: cardData[id].subfamilia,
-      unidad:     cardData[id].unidad,
-      cantidad:   cardData[id].cantidad,
-      motivo:     cardData[id].motivo,
-      notas:      cardData[id].notas
+      nombre:   cardData[id].nombre,
+      codigo:   cardData[id].codigo,
+      unidad:   cardData[id].unidad,
+      cantidad: cardData[id].cantidad,
+      motivo:   cardData[id].motivo,
+      notas:    cardData[id].notas
     }))
   };
 
@@ -1236,14 +748,12 @@ async function saveReport() {
     const json = await res.json();
     if (json.ok) {
       showMsg('success', `✓ Reporte guardado correctamente (${payload.productos.length} producto${payload.productos.length!==1?'s':''}).`);
-    } else {
-      throw new Error(json.error || 'Error desconocido');
-    }
+    } else throw new Error(json.error || 'Error desconocido');
   } catch(e) {
     showMsg('error', 'Error al guardar: ' + e.message);
   } finally {
     btn.disabled = false;
-    btn.innerHTML = origText;
+    btn.innerHTML = orig;
   }
 }
 
@@ -1262,10 +772,10 @@ function submitReport() {
   products.forEach((id, i) => {
     const d = cardData[id] || {};
     body += `[${i+1}] ${d.nombre}\n`;
-    if (d.codigo)   body += `  Código: ${d.codigo}\n`;
+    if (d.codigo)  body += `  Código: ${d.codigo}\n`;
     body += `  Cantidad: ${d.cantidad}${d.unidad?' '+d.unidad:''}\n`;
     body += `  Motivo: ${d.motivo}\n`;
-    if (d.notas)    body += `  Notas: ${d.notas}\n`;
+    if (d.notas)   body += `  Notas: ${d.notas}\n`;
     body += '\n';
   });
 
@@ -1289,7 +799,6 @@ async function loadHistorial() {
     const json = await res.json();
     if (!json.ok) throw new Error(json.error);
     historialData = json.data || [];
-    // Populate sede filter
     const sedes = [...new Set(historialData.map(r => r.sede || r.restaurante || '').filter(Boolean))];
     const fs = document.getElementById('filtroSede');
     const curr = fs.value;
@@ -1298,22 +807,18 @@ async function loadHistorial() {
     applyFilters();
   } catch(e) {
     document.getElementById('histBody').innerHTML =
-      `<tr><td colspan="10" class="empty-state">Error cargando historial: ${esc(e.message)}</td></tr>`;
-  } finally {
-    _histLoading = false;
-  }
+      `<tr><td colspan="10" class="empty-state">Error: ${esc(e.message)}</td></tr>`;
+  } finally { _histLoading = false; }
 }
 
 function applyFilters() {
-  const sede    = document.getElementById('filtroSede').value.toLowerCase();
-  const prod    = document.getElementById('filtroProducto').value.toLowerCase();
-  filteredData  = historialData.filter(r => {
+  const sede = document.getElementById('filtroSede').value.toLowerCase();
+  const prod = document.getElementById('filtroProducto').value.toLowerCase();
+  filteredData = historialData.filter(r => {
     const rSede = (r.sede || r.restaurante || '').toLowerCase();
     const rProd = (r.producto || r.nombre || '').toLowerCase();
     const rCod  = (r.codigo || '').toLowerCase();
-    const sedeOk = !sede || rSede.includes(sede);
-    const prodOk = !prod  || rProd.includes(prod) || rCod.includes(prod);
-    return sedeOk && prodOk;
+    return (!sede || rSede.includes(sede)) && (!prod || rProd.includes(prod) || rCod.includes(prod));
   });
   renderHistorial();
 }
@@ -1321,14 +826,12 @@ function applyFilters() {
 function renderHistorial() {
   const body = document.getElementById('histBody');
   document.getElementById('histCount').textContent = filteredData.length + ' registros';
-  selectedRows.clear();
-  updateCSVPanel();
+  selectedRows.clear(); updateCSVPanel();
 
   if (!filteredData.length) {
     body.innerHTML = '<tr><td colspan="10" class="empty-state">No hay reportes que coincidan con los filtros.</td></tr>';
     return;
   }
-
   body.innerHTML = filteredData.map((r, i) => {
     const sede  = r.sede || r.restaurante || '';
     const pv    = r.puntoVenta || r.punto_venta || '';
@@ -1342,12 +845,9 @@ function renderHistorial() {
     const notas = r.notas || '';
     return `<tr data-idx="${i}" onclick="toggleRow(${i}, this)">
       <td><span class="badge badge-blue">${esc(sede)}</span></td>
-      <td>${esc(pv)}</td>
-      <td>${esc(fecha)}</td>
-      <td>${esc(enc)}</td>
+      <td>${esc(pv)}</td><td>${esc(fecha)}</td><td>${esc(enc)}</td>
       <td style="font-weight:500">${esc(prod)}</td>
-      <td class="code">${esc(cod)}</td>
-      <td>${esc(unid)}</td>
+      <td class="code">${esc(cod)}</td><td>${esc(unid)}</td>
       <td style="font-family:'JetBrains Mono',monospace">${esc(cant)}</td>
       <td>${esc(mot)}</td>
       <td style="color:var(--text3);font-size:12px">${esc(notas)}</td>
@@ -1356,49 +856,36 @@ function renderHistorial() {
 }
 
 function toggleRow(idx, tr) {
-  if (selectedRows.has(idx)) {
-    selectedRows.delete(idx);
-    tr.classList.remove('selected-row');
-  } else {
-    selectedRows.add(idx);
-    tr.classList.add('selected-row');
-  }
+  if (selectedRows.has(idx)) { selectedRows.delete(idx); tr.classList.remove('selected-row'); }
+  else { selectedRows.add(idx); tr.classList.add('selected-row'); }
   updateCSVPanel();
 }
-
 function updateCSVPanel() {
   const panel = document.getElementById('csvPanel');
   const preview = document.getElementById('csvPreview');
-  if (!selectedRows.size) {
-    panel.classList.remove('visible');
-    return;
-  }
+  if (!selectedRows.size) { panel.classList.remove('visible'); return; }
   panel.classList.add('visible');
-  const items = [...selectedRows].map(i => filteredData[i]).filter(Boolean);
-  preview.textContent = `${items.length} fila${items.length!==1?'s':''} seleccionada${items.length!==1?'s':''} — Campos: código de barras, cantidad.`;
+  const n = selectedRows.size;
+  preview.textContent = `${n} fila${n!==1?'s':''} seleccionada${n!==1?'s':''} — Campos: código de barras, cantidad.`;
 }
-
 function clearSelection() {
   selectedRows.clear();
   document.querySelectorAll('.selected-row').forEach(tr => tr.classList.remove('selected-row'));
   updateCSVPanel();
 }
-
 function downloadCSV() {
   if (!selectedRows.size) return;
   const items = [...selectedRows].map(i => filteredData[i]).filter(Boolean);
   let csv = 'codigo_barras,cantidad\n';
   items.forEach(r => {
-    const cod  = (r.codigo || '').replace(/"/g, '""');
-    const cant = (r.cantidad || '').toString().replace(/"/g, '""');
+    const cod  = (r.codigo || '').replace(/"/g,'""');
+    const cant = String(r.cantidad || '').replace(/"/g,'""');
     csv += `"${cod}","${cant}"\n`;
   });
   const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url;
-  a.download = 'reporte_bajas_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
+  a.href = url; a.download = 'bajas_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
   URL.revokeObjectURL(url);
 }
 
@@ -1408,31 +895,23 @@ function downloadCSV() {
 function showMsg(type, text) {
   const ok  = document.getElementById('msgSuccess');
   const err = document.getElementById('msgError');
-  ok.style.display  = 'none';
-  err.style.display = 'none';
+  ok.style.display = 'none'; err.style.display = 'none';
   if (type === 'success') { ok.textContent  = text; ok.style.display  = 'block'; ok.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
   else                    { err.textContent = text; err.style.display = 'block'; err.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
 }
-
 function hideMsg() {
   document.getElementById('msgSuccess').style.display = 'none';
   document.getElementById('msgError').style.display   = 'none';
 }
-
 function esc(str) {
-  return String(str || '')
-    .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
-    .replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // ════════════════════════════════════════════
-// INICIALIZACIÓN
+// INIT
 // ════════════════════════════════════════════
 (async function init() {
-  // Fecha de hoy por defecto
   document.getElementById('fechaReporte').valueAsDate = new Date();
-
-  // Cargar datos base
   await Promise.all([loadSedes(), loadMotivos()]);
 })();
 </script>
