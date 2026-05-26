@@ -281,14 +281,10 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
     </div>
 
     <div class="card">
-      <div class="row2">
+      <div style="display:grid;grid-template-columns:1fr;">
         <button class="btn btn-success btn-full" id="saveBtn" onclick="saveReport()">
           <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 4h8l3 3v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm4 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-10H8v3h4V4z"/></svg>
           Guardar en Google Sheets
-        </button>
-        <button class="btn btn-primary btn-full" id="submitBtn" onclick="submitReport()">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm3.5 7l3-4 2 2.5 2.5-3 3 4.5H5.5z"/></svg>
-          Enviar por Correo
         </button>
       </div>
       <div class="msg msg-success" id="msgSuccess"></div>
