@@ -248,7 +248,7 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
       <div class="row2">
         <div class="field">
           <label>Restaurante / Sede <span class="req">*</span></label>
-          <select id="sede" onchange="onSedeChange()"><option value="">Cargando sedes...</option></select>
+          <select id="sede" onchange="onSedeChange(); clearFieldError(this)" required><option value="">Cargando sedes...</option></select>
         </div>
         <div class="field">
           <label>Punto de Venta <span class="req">*</span></label>
@@ -262,7 +262,7 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
         </div>
         <div class="field">
           <label>Nombre del Responsable <span class="req">*</span></label>
-          <input type="text" id="encargado" placeholder="Nombre completo" />
+          <input type="text" id="encargado" placeholder="Nombre completo" oninput="clearFieldError(this)" />
         </div>
       </div>
     </div>
@@ -694,17 +694,39 @@ function autoFill(id) {
 // ════════════════════════════════════════════
 // VALIDACIÓN
 // ════════════════════════════════════════════
+function markFieldError(el, msg) {
+  if (el) {
+    el.style.border = '2px solid var(--danger)';
+    el.style.boxShadow = '0 0 0 3px rgba(220,38,38,.18)';
+    el.addEventListener('input', clearFieldError.bind(null, el), { once: true });
+    el.addEventListener('change', clearFieldError.bind(null, el), { once: true });
+  }
+  return msg;
+}
+function clearFieldError(el) {
+  if (el) { el.style.border = ''; el.style.boxShadow = ''; }
+}
+function clearAllErrors() {
+  ['sede','puntoVenta','encargado','fechaReporte'].forEach(function(id) {
+    clearFieldError(document.getElementById(id));
+  });
+}
 function validate() {
-  if (!document.getElementById('sede').value)        return 'Selecciona una sede.';
-  if (!document.getElementById('puntoVenta').value)  return 'Selecciona el punto de venta.';
-  if (!document.getElementById('encargado').value.trim()) return 'Ingresa el nombre del responsable.';
-  if (!document.getElementById('fechaReporte').value) return 'Selecciona la fecha del reporte.';
-  if (!products.length) return 'Agrega al menos un producto.';
+  clearAllErrors();
+  const sedeEl    = document.getElementById('sede');
+  const pvEl      = document.getElementById('puntoVenta');
+  const encEl     = document.getElementById('encargado');
+  const fechaEl   = document.getElementById('fechaReporte');
+  if (!sedeEl.value)          return markFieldError(sedeEl,  '⚠ Selecciona una sede.');
+  if (!pvEl.value)            return markFieldError(pvEl,    '⚠ Selecciona el punto de venta.');
+  if (!encEl.value.trim())    return markFieldError(encEl,   '⚠ Ingresa el nombre del responsable.');
+  if (!fechaEl.value)         return markFieldError(fechaEl, '⚠ Selecciona la fecha del reporte.');
+  if (!products.length)       return '⚠ Agrega al menos un producto.';
   for (const id of products) {
     const d = cardData[id] || {};
-    if (!d.nombre.trim()) return 'Todos los productos deben tener nombre.';
-    if (!d.cantidad)      return 'Todos los productos deben tener cantidad.';
-    if (!d.motivo)        return 'Todos los productos deben tener motivo.';
+    if (!d.nombre.trim()) return '⚠ Todos los productos deben tener nombre.';
+    if (!d.cantidad)      return '⚠ Todos los productos deben tener cantidad.';
+    if (!d.motivo)        return '⚠ Todos los productos deben tener motivo.';
   }
   return null;
 }
@@ -795,7 +817,7 @@ async function loadHistorial() {
     const json = await res.json();
     if (!json.ok) throw new Error(json.error);
     historialData = json.data || [];
-    const sedes = [...new Set(historialData.map(r => r.sede || r.restaurante || '').filter(Boolean))];
+    const sedes = [...new Set(historialData.map(r => r.restaurante || r.sede || '').filter(Boolean))];
     const fs = document.getElementById('filtroSede');
     const curr = fs.value;
     fs.innerHTML = '<option value="">Todas las sedes</option>' +
@@ -810,13 +832,20 @@ async function loadHistorial() {
 function applyFilters() {
   const sede = document.getElementById('filtroSede').value.toLowerCase();
   const prod = document.getElementById('filtroProducto').value.toLowerCase();
-  filteredData = historialData.filter(r => {
-    const rSede = (r.sede || r.restaurante || '').toLowerCase();
-    const rProd = (r.producto || r.nombre || '').toLowerCase();
-    const rCod  = (r.codigo || '').toLowerCase();
-    return (!sede || rSede.includes(sede)) && (!prod || rProd.includes(prod) || rCod.includes(prod));
-  });
-  renderHistorial();
+  filteredData = historialData.filter(function(r) {
+const rSede = (r.restaurante || r.sede || '').toLowerCase();
+const rProd = (r.producto || r.nombre || '').toLowerCase();
+const rCod  = (r.codigo || '').toLowerCase();
+return (!sede || rSede.includes(sede)) && (!prod || rProd.includes(prod) || rCod.includes(prod));
+});
+renderHistorial();
+}
+
+function fmtDate(val) {
+  if (!val) return '';
+  const d = new Date(val);
+  if (isNaN(d.getTime())) return String(val);
+  return d.toLocaleDateString('es-CO', { year:'numeric', month:'2-digit', day:'2-digit' });
 }
 
 function renderHistorial() {
@@ -829,16 +858,16 @@ function renderHistorial() {
     return;
   }
   body.innerHTML = filteredData.map((r, i) => {
-    const sede  = r.sede || r.restaurante || '';
-    const pv    = r.puntoVenta || r.punto_venta || '';
-    const fecha = r.fechaReporte || r.fecha || '';
-    const enc   = r.encargado || '';
-    const prod  = r.producto || r.nombre || '';
-    const cod   = r.codigo || '';
+    const sede  = r.restaurante || r.sede || '';
+    const pv    = r.puntoVenta  || r.punto_venta || '';
+    const fecha = fmtDate(r.fechaReporte || r.fecha || '');
+    const enc   = r.encargado   || '';
+    const prod  = r.producto    || r.nombre || '';
+    const cod   = r.codigo      || '';
     const unid  = r.unidadMedida || r.unidad || '';
-    const cant  = r.cantidad || '';
-    const mot   = r.motivo || '';
-    const notas = r.notas || '';
+    const cant  = r.cantidad    || '';
+    const mot   = r.motivo      || '';
+    const notas = r.notas       || '';
     return `<tr data-idx="${i}" onclick="toggleRow(${i}, this)">
       <td><span class="badge badge-blue">${esc(sede)}</span></td>
       <td>${esc(pv)}</td><td>${esc(fecha)}</td><td>${esc(enc)}</td>
@@ -850,6 +879,7 @@ function renderHistorial() {
     </tr>`;
   }).join('');
 }
+
 
 function toggleRow(idx, tr) {
   if (selectedRows.has(idx)) { selectedRows.delete(idx); tr.classList.remove('selected-row'); }
