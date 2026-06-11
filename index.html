@@ -48,35 +48,38 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 /* ══ LAYOUT ══ */
 .layout { display: flex; min-height: 100vh; }
 
-.sidebar {
-  width: var(--sidebar-w); background: var(--text); color: #fff;
-  display: flex; flex-direction: column; flex-shrink: 0;
-  position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+.topnav {
+  background: var(--text); color: #fff;
+  display: flex; align-items: center; padding: 0 20px; gap: 0;
+  position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-md);
+  height: 56px; flex-shrink: 0; width: 100%;
 }
-.sidebar-header { padding: 20px 18px 16px; border-bottom: 1px solid rgba(255,255,255,.1); }
-.sidebar-logo { display: flex; align-items: center; gap: 10px; }
-.logo-icon { width: 38px; height: 38px; background: var(--primary); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.logo-icon svg { width: 20px; height: 20px; fill: white; }
-.logo-name { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.2; }
-.logo-sub  { font-size: 11px; color: rgba(255,255,255,.5); }
-.nav-section { padding: 16px 12px 8px; }
-.nav-section-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .08em; padding: 0 6px; margin-bottom: 6px; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,.65); cursor: pointer; transition: all .15s; margin-bottom: 2px; border: none; background: none; width: 100%; text-align: left; }
-.nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+.topnav-logo { display: flex; align-items: center; gap: 10px; padding-right: 18px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 8px; flex-shrink: 0; }
+.logo-icon { width: 34px; height: 34px; background: var(--primary); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logo-icon svg { width: 18px; height: 18px; fill: white; }
+.logo-name { font-size: 13px; font-weight: 700; color: #fff; line-height: 1.2; white-space: nowrap; }
+.logo-sub { font-size: 10px; color: rgba(255,255,255,.5); }
+.nav-items { display: flex; align-items: center; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; color: rgba(255,255,255,.7); cursor: pointer; transition: all .15s; border: none; background: none; white-space: nowrap; }
+.nav-item:hover { background: rgba(255,255,255,.1); color: #fff; }
 .nav-item.active { background: var(--primary); color: #fff; }
-.nav-item svg { width: 17px; height: 17px; opacity: .8; }
+.nav-item svg { width: 15px; height: 15px; opacity: .85; flex-shrink: 0; }
 .nav-item.active svg { opacity: 1; }
-
-.main-content { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
-
-.topbar { height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow); }
+.topnav-spacer { flex: 1; }
+.topnav-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.topbar { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 10px 28px; gap: 12px; box-shadow: var(--shadow); flex-wrap: wrap; }
 .topbar-title { font-size: 16px; font-weight: 600; color: var(--text); }
 .topbar-spacer { flex: 1; }
 .status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px; }
 .status-badge.connected { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-bd); }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .topbar-sede-indicator { font-size: 12px; background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-bd); border-radius: 20px; padding: 4px 12px; font-weight: 600; }
-
+.rw-cell { display: flex; align-items: center; gap: 4px; min-width: 90px; }
+.rw-input { border: 1.5px solid transparent; border-radius: 4px; padding: 3px 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); background: transparent; width: 90px; cursor: text; transition: border .15s; }
+.rw-input:hover { border-color: var(--border); background: var(--surface2); }
+.rw-input:focus { outline: none; border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 2px rgba(37,99,235,.12); }
+.rw-saving { font-size: 11px; color: var(--text3); }
 .page { display: none; padding: 24px 28px 40px; }
 .page.active { display: block; }
 
@@ -181,62 +184,37 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* Mobile */
-@media (max-width: 768px) {
-  .sidebar { transform: translateX(-100%); transition: transform .25s; }
-  .sidebar.open { transform: translateX(0); }
-  .main-content { margin-left: 0; }
-  .topbar { padding: 0 16px; }
-  .page { padding: 16px 16px 40px; }
-  .menu-toggle { display: flex !important; }
+@media (max-width: 700px) {
+  .topnav { height: auto; padding: 8px 12px; flex-wrap: wrap; gap: 6px; }
+  .topnav-logo { border-right: none; padding-right: 0; }
+  .nav-items { flex-wrap: wrap; width: 100%; }
+  .nav-item { padding: 6px 10px; font-size: 12px; }
+  .page { padding: 14px 12px 40px; }
 }
-.menu-toggle { display: none; width: 36px; height: 36px; background: none; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; align-items: center; justify-content: center; }
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 99; }
-.overlay.open { display: block; }
 </style>
 </head>
 <body>
-<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-
-<div class="layout">
-<!-- ════ SIDEBAR ════ -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 20 20"><path d="M10 2L3 6v8l7 4 7-4V6L10 2zm0 2.2l5 2.8-5 2.8L5 7l5-2.8zM4 8.5l5.5 3.1V17L4 13.8V8.5zm7.5 8.5v-5.4L17 8.5v5.3L11.5 17z"/></svg>
-      </div>
-      <div>
-        <div class="logo-name">Inventario</div>
-        <div class="logo-sub">Bajas y Mala Rotación</div>
-      </div>
-    </div>
+<nav class="topnav" id="topnav">
+  <div class="topnav-logo">
+    <div class="logo-icon"><svg viewBox="0 0 20 20"><path d="M10 2L3 6v8l7 4 7-4V6L10 2zm0 2.2l5 2.8-5 2.8L5 7l5-2.8zM4 8.5l5.5 3.1V17L4 13.8V8.5zm7.5 8.5v-5.4L17 8.5v5.3L11.5 17z"/></svg></div>
+    <div><div class="logo-name">Inventario</div><div class="logo-sub">Bajas y Mala Rotación</div></div>
   </div>
-  <nav class="nav-section">
-    <div class="nav-section-label">Módulos</div>
+  <div class="nav-items">
     <button class="nav-item active" id="nav-form" onclick="showPage('form')">
-      <svg viewBox="0 0 20 20"><path d="M4 4h12v2H4zm0 4h12v2H4zm0 4h7v2H4z"/></svg>
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4h12v2H4zm0 4h12v2H4zm0 4h7v2H4z"/></svg>
       Registrar Reporte
     </button>
     <button class="nav-item" id="nav-historial" onclick="showPage('historial')">
-      <svg viewBox="0 0 20 20"><path d="M3 5h2V3a1 1 0 0 1 2 0v2h6V3a1 1 0 0 1 2 0v2h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 4v7h14V9H3z"/></svg>
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 5h2V3a1 1 0 0 1 2 0v2h6V3a1 1 0 0 1 2 0v2h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 4v7h14V9H3z"/></svg>
       Historial de Reportes
     </button>
-  </nav>
-  <div style="flex:1"></div>
-  <div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:rgba(255,255,255,.35);">Conectado a Google Sheets</div>
-</aside>
-
-<!-- ════ MAIN ════ -->
-<div class="main-content">
-  <header class="topbar">
-    <button class="menu-toggle" onclick="toggleSidebar()">
-      <svg width="18" height="18" viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14" stroke="var(--text2)" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
-    </button>
-    <span class="topbar-title" id="topbar-title">Registrar Reporte</span>
-    <div class="topbar-spacer"></div>
+  </div>
+  <div class="topnav-spacer"></div>
+  <div class="topnav-right">
     <div id="topbar-sede" class="topbar-sede-indicator" style="display:none">—</div>
     <div class="status-badge connected"><span class="status-dot"></span><span>Sheets conectado</span></div>
-  </header>
+  </div>
+</nav>
 
   <!-- ═══ PÁGINA FORMULARIO ═══ -->
   <div class="page active" id="page-form">
@@ -358,8 +336,6 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
     </div>
   </div>
 
-</div><!-- end main-content -->
-</div><!-- end layout -->
 <script>
 // ════════════════════════════════════════════
 // CONFIGURACIÓN
@@ -951,7 +927,7 @@ function renderHistorial() {
       <td style="color:var(--text3);font-size:12px">${esc(notas)}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">${esc(nb)}</td>
       <td style="font-size:16px;text-align:center">${nb ? '🟢' : '🔴'}</td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--primary)">${esc(rw)}</td>
+      <td onclick="event.stopPropagation()" style="padding:6px 10px"><div class="rw-cell"><input class="rw-input" type="text" value="${esc(rw)}" placeholder="—" title="Editar N° Registro Web" data-idx="${i}" onchange="saveRW(this,${i})" /><span class="rw-saving" id="rw-status-${i}"></span></div></td>
     </tr>`;
   }).join('');
 }
@@ -975,6 +951,30 @@ function clearSelection() {
   document.querySelectorAll('.selected-row').forEach(tr => tr.classList.remove('selected-row'));
   updateCSVPanel();
 }
+function saveRW(input, idx) {
+  const r = filteredData[idx];
+  if (!r) return;
+  const val = input.value.trim();
+  const statusEl = document.getElementById('rw-status-' + idx);
+  if (statusEl) statusEl.textContent = '..';
+  r.registroWeb = val;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'updateRW',
+      fechaRegistro: r.fechaRegistro,
+      producto: r.producto,
+      codigo: r.codigo,
+      registroWeb: val
+    })
+  })
+  .then(res => res.json())
+  .then(j => {
+    if (statusEl) { statusEl.textContent = j.ok ? '✓' : '⚠'; setTimeout(() => { if(statusEl) statusEl.textContent = ''; }, 2000); }
+  })
+  .catch(() => { if (statusEl) { statusEl.textContent = '⚠'; setTimeout(() => { if(statusEl) statusEl.textContent = ''; }, 2000); } });
+}
+
 function downloadCSV() {
   if (!selectedRows.size) return;
   const items = [...selectedRows].map(i => filteredData[i]).filter(Boolean);
