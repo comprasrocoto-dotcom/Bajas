@@ -372,8 +372,7 @@ function showPage(name) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
-  document.getElementById('topbar-title').textContent =
-    name === 'form' ? 'Registrar Reporte' : 'Historial de Reportes';
+  // page title in nav
   if (name === 'historial') loadHistorial();
   closeSidebar();
 }
