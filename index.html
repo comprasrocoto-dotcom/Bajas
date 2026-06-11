@@ -324,6 +324,10 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
         </div>
         <div style="flex:1"></div>
         <span class="count-badge" id="histCount">0 registros</span>
+        <button class="btn btn-primary" id="btnDownloadFiltered" onclick="downloadFilteredCSV()" style="font-size:12px;padding:6px 14px;">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg>
+          Descargar CSV
+        </button>
       </div>
       <div class="hist-table-wrap">
         <table class="hist-table" id="histTable">
@@ -868,6 +872,7 @@ function fmtDate(val) {
 function renderHistorial() {
   const body = document.getElementById('histBody');
   document.getElementById('histCount').textContent = filteredData.length + ' registros';
+  const dlBtn = document.getElementById('btnDownloadFiltered'); if(dlBtn){ dlBtn.disabled = !filteredData.length; dlBtn.innerHTML = filteredData.length ? '<svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg> Descargar CSV (' + filteredData.length + ')' : 'Sin resultados'; }
   selectedRows.clear(); updateCSVPanel();
 
   if (!filteredData.length) {
@@ -929,6 +934,23 @@ function downloadCSV() {
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href = url; a.download = 'bajas_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+function downloadFilteredCSV() {
+  if (!filteredData.length) return;
+  const sede = document.getElementById('filtroSede').value || 'todos';
+  const motivo = (document.getElementById('filtroMotivo') ? document.getElementById('filtroMotivo').value : '') || 'todos';
+  let csv = 'codigo_barras,cantidad\n';
+  filteredData.forEach(r => {
+    const cod = (r.codigo || '').replace(/"/g,'""');
+    const cant = String(r.cantidad || '').replace(/"/g,'""');
+    csv += `"${cod}","${cant}"\n`;
+  });
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const fname = 'bajas_' + sede.replace(/\s+/g,'_') + '_' + motivo.replace(/\s+/g,'_') + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.href = url; a.download = fname; a.click();
   URL.revokeObjectURL(url);
 }
 
