@@ -352,14 +352,6 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
         <div style="margin-top:10px;font-size:12px;color:var(--text3);" id="csvPreview"></div>
       </div>
     </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;margin-top:0;box-shadow:var(--shadow);">
-    <span style="font-size:13px;color:var(--text3);" id="csvHint">Selecciona filtros para exportar</span>
-    <button class="btn btn-primary" id="btnDownloadFiltered" onclick="downloadFilteredCSV()" style="font-size:13.5px;padding:9px 20px;gap:8px;">
-      <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg>
-      Descargar CSV
-    </button>
-  </div>
-
   </div>
 
 </div><!-- end main-content -->
@@ -876,8 +868,7 @@ function fmtDate(val) {
 function renderHistorial() {
   const body = document.getElementById('histBody');
   document.getElementById('histCount').textContent = filteredData.length + ' registros';
-  const dlBtn = document.getElementById('btnDownloadFiltered'); if(dlBtn){ dlBtn.disabled = !filteredData.length; dlBtn.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg> Descargar CSV (' + filteredData.length + ')'; }
-  const hint = document.getElementById('csvHint'); if(hint) hint.textContent = filteredData.length + ' registro' + (filteredData.length!==1?'s':'') + ' listos para exportar';
+  const dlBtn = document.getElementById('btnDownloadFiltered'); if(dlBtn){ dlBtn.style.display = filteredData.length ? 'flex' : 'none'; const h = document.getElementById('csvHint'); if(h) h.textContent = 'Descargar CSV (' + filteredData.length + ')'; }
   selectedRows.clear(); updateCSVPanel();
 
   if (!filteredData.length) {
@@ -985,5 +976,9 @@ function esc(str) {
   await Promise.all([loadSedes(), loadMotivos()]);
 })();
 </script>
+<div id="btnDownloadFiltered" onclick="downloadFilteredCSV()" style="display:none;position:fixed;bottom:24px;right:24px;z-index:9999;background:#2563eb;color:#fff;border-radius:10px;padding:12px 22px;box-shadow:0 6px 20px rgba(37,99,235,.4);align-items:center;gap:10px;font-family:Inter,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">
+<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg>
+<span id="csvHint">Descargar CSV</span>
+</div>
 </body>
 </html>
