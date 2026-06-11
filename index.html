@@ -331,18 +331,10 @@ Historial de Reportes
 <div class="field" style="margin:0"><label>Dirección</label>
 <input type="text" id="direccion" placeholder="Se completa al elegir la sede" readonly/></div>
 </div>
-<div class="row2" style="margin-bottom:16px">
-<div class="field" style="margin:0"><label>Punto de Venta <span class="req">*</span></label>
-<select id="puntoVenta"><option value="">Selecciona la sede primero</option></select></div>
-<div class="field" style="margin:0"><label>Nombre del Responsable <span class="req">*</span></label>
+<div class="field" style="margin-bottom:16px"><label>Nombre del Responsable <span class="req">*</span></label>
 <input type="text" id="encargado" placeholder="Nombre completo" oninput="clearFieldError(this)"/></div>
-</div>
-<div class="row2">
-<div class="field" style="margin:0"><label>Fecha del Reporte <span class="req">*</span></label>
+<div class="field"><label>Fecha del Reporte <span class="req">*</span></label>
 <input type="date" id="fechaReporte"/></div>
-<div class="field" style="margin:0"><label>N° de Registro Web <span class="opt">(opcional)</span></label>
-<input type="text" id="registroWeb" placeholder="Ej: WEB-00123"/></div>
-</div>
 </div>
 <div class="card">
 <div class="card-header">
@@ -627,8 +619,7 @@ ind.style.display=sede?'inline-flex':'none';
 const dirEl=document.getElementById('direccion');
 const found=sedesData.find(d=>d.sede===sede);
 if(dirEl) dirEl.value=found?found.direccion:'';
-const pvSel=document.getElementById('puntoVenta');
-pvSel.innerHTML='<option value="">Selecciona punto de venta...</option>';
+
 const catalogKey=sede.toUpperCase().includes('MALANGA')?'MALANGA':'ROCOTO';
 if(catalogKey!==currentCatalogKey) await loadCatalog(catalogKey);
 document.getElementById('addBtn').disabled=!sede;
@@ -731,9 +722,8 @@ function clearFieldError(el){if(el){el.style.border='';el.style.boxShadow='';}}
 function clearAllErrors(){['sede','puntoVenta','encargado','fechaReporte'].forEach(id=>clearFieldError(document.getElementById(id)));}
 function validate(){
 clearAllErrors();
-const sedeEl=document.getElementById('sede'),pvEl=document.getElementById('puntoVenta'),encEl=document.getElementById('encargado'),fechaEl=document.getElementById('fechaReporte');
+const sedeEl=document.getElementById('sede'),encEl=document.getElementById('encargado'),fechaEl=document.getElementById('fechaReporte');
 if(!sedeEl.value) return markFieldError(sedeEl,'⚠ Selecciona una sede.');
-if(!pvEl.value) return markFieldError(pvEl,'⚠ Selecciona el punto de venta.');
 if(!encEl.value.trim()) return markFieldError(encEl,'⚠ Ingresa el nombre del responsable.');
 if(!fechaEl.value) return markFieldError(fechaEl,'⚠ Selecciona la fecha del reporte.');
 if(!products.length) return '⚠ Agrega al menos un producto.';
@@ -751,7 +741,7 @@ products.forEach(id=>saveCard(id));
 const err=validate();if(err){showMsg('error',err);return;}
 const btn=document.getElementById('saveBtn'),orig=btn.innerHTML;
 btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Guardando...';hideMsg();
-const payload={action:'save',fechaReporte:document.getElementById('fechaReporte').value,sede:document.getElementById('sede').value,puntoVenta:document.getElementById('puntoVenta').value,encargado:document.getElementById('encargado').value.trim(),registroWeb:(document.getElementById('registroWeb')?document.getElementById('registroWeb').value.trim():''),productos:products.map(id=>({nombre:cardData[id].nombre,codigo:cardData[id].codigo,unidad:cardData[id].unidad,cantidad:cardData[id].cantidad,motivo:cardData[id].motivo,notas:cardData[id].notas}))};
+const payload={action:'save',fechaReporte:document.getElementById('fechaReporte').value,sede:document.getElementById('sede').value,encargado:document.getElementById('encargado').value.trim(),productos:products.map(id=>({nombre:cardData[id].nombre,codigo:cardData[id].codigo,unidad:cardData[id].unidad,cantidad:cardData[id].cantidad,motivo:cardData[id].motivo,notas:cardData[id].notas}))};
 try{
 const res=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});
 const json=await res.json();
