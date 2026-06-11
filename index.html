@@ -265,6 +265,12 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
           <input type="text" id="encargado" placeholder="Nombre completo" oninput="clearFieldError(this)" />
         </div>
       </div>
+      <div class="row2">
+        <div class="field">
+          <label>N° de Registro Web <span class="opt">(opcional)</span></label>
+          <input type="text" id="registroWeb" placeholder="Ej: WEB-00123" />
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -307,6 +313,10 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
         <div style="display:flex;align-items:center;gap:8px;">
           <label style="font-size:12px;font-weight:600;color:var(--text3);">Sede:</label>
           <select class="filter-select" id="filtroSede" onchange="applyFilters()"><option value="">Todas las sedes</option></select>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label style="font-size:12px;font-weight:600;color:var(--text3);">Motivo:</label>
+          <select class="filter-select" id="filtroMotivo" onchange="applyFilters()"><option value="">Todos los motivos</option></select>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
           <label style="font-size:12px;font-weight:600;color:var(--text3);">Producto:</label>
@@ -725,6 +735,7 @@ function validate() {
   for (const id of products) {
     const d = cardData[id] || {};
     if (!d.nombre.trim()) return '⚠ Todos los productos deben tener nombre.';
+    if (!PROD_MAP.has(d.nombre.trim())) return '⚠ El producto "' + d.nombre.trim() + '" no existe en el catálogo. Selecciona un producto de la lista.';
     if (!d.cantidad)      return '⚠ Todos los productos deben tener cantidad.';
     if (!d.motivo)        return '⚠ Todos los productos deben tener motivo.';
   }
@@ -751,6 +762,7 @@ async function saveReport() {
     sede:         document.getElementById('sede').value,
     puntoVenta:   document.getElementById('puntoVenta').value,
     encargado:    document.getElementById('encargado').value.trim(),
+    registroWeb:  (document.getElementById('registroWeb') ? document.getElementById('registroWeb').value.trim() : ''),
     productos: products.map(id => ({
       nombre:   cardData[id].nombre,
       codigo:   cardData[id].codigo,
@@ -822,6 +834,9 @@ async function loadHistorial() {
     const curr = fs.value;
     fs.innerHTML = '<option value="">Todas las sedes</option>' +
       sedes.map(s => `<option value="${esc(s)}" ${s===curr?'selected':''}>${esc(s)}</option>`).join('');
+    const motivos = [...new Set(historialData.map(r => r.motivo || '').filter(Boolean))];
+    const fm = document.getElementById('filtroMotivo');
+    if (fm) { const currM = fm.value; fm.innerHTML = '<option value="">Todos los motivos</option>' + motivos.map(m => `<option value="${esc(m)}" ${m===currM?'selected':''}>${esc(m)}</option>`).join(''); }
     applyFilters();
   } catch(e) {
     document.getElementById('histBody').innerHTML =
@@ -831,12 +846,14 @@ async function loadHistorial() {
 
 function applyFilters() {
   const sede = document.getElementById('filtroSede').value.toLowerCase();
+  const motivo = (document.getElementById('filtroMotivo') ? document.getElementById('filtroMotivo').value.toLowerCase() : '');
   const prod = document.getElementById('filtroProducto').value.toLowerCase();
   filteredData = historialData.filter(function(r) {
 const rSede = (r.restaurante || r.sede || '').toLowerCase();
 const rProd = (r.producto || r.nombre || '').toLowerCase();
 const rCod  = (r.codigo || '').toLowerCase();
-return (!sede || rSede.includes(sede)) && (!prod || rProd.includes(prod) || rCod.includes(prod));
+const rMotivo = (r.motivo || '').toLowerCase();
+return (!sede || rSede.includes(sede)) && (!motivo || rMotivo === motivo) && (!prod || rProd.includes(prod) || rCod.includes(prod));
 });
 renderHistorial();
 }
