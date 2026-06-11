@@ -324,8 +324,11 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
         </div>
         <div style="flex:1"></div>
         <span class="count-badge" id="histCount">0 registros</span>
-        <button class="btn btn-primary" id="btnDownloadFiltered" onclick="downloadFilteredCSV()" style="font-size:12px;padding:6px 14px;">
-          <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0 4px;">
+        <span style="font-size:12px;color:var(--text3);" id="csvHint">Selecciona filtros para exportar</span>
+        <button class="btn btn-primary" id="btnDownloadFiltered" onclick="downloadFilteredCSV()" style="font-size:13px;padding:8px 18px;gap:7px;">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg>
           Descargar CSV
         </button>
       </div>
@@ -872,7 +875,8 @@ function fmtDate(val) {
 function renderHistorial() {
   const body = document.getElementById('histBody');
   document.getElementById('histCount').textContent = filteredData.length + ' registros';
-  const dlBtn = document.getElementById('btnDownloadFiltered'); if(dlBtn){ dlBtn.disabled = !filteredData.length; dlBtn.innerHTML = filteredData.length ? '<svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg> Descargar CSV (' + filteredData.length + ')' : 'Sin resultados'; }
+  const dlBtn = document.getElementById('btnDownloadFiltered'); if(dlBtn){ dlBtn.disabled = !filteredData.length; dlBtn.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg> Descargar CSV (' + filteredData.length + ')'; }
+  const hint = document.getElementById('csvHint'); if(hint) hint.textContent = filteredData.length + ' registro' + (filteredData.length!==1?'s':'') + ' listos para exportar';
   selectedRows.clear(); updateCSVPanel();
 
   if (!filteredData.length) {
