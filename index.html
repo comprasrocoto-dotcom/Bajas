@@ -322,6 +322,10 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
           <label style="font-size:12px;font-weight:600;color:var(--text3);">Producto:</label>
           <input type="text" class="search-input" id="filtroProducto" placeholder="Buscar por nombre o código..." oninput="applyFilters()" />
         </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label style="font-size:12px;font-weight:600;color:var(--text3);">Estado:</label>
+          <select class="filter-select" id="filtroEstado" onchange="applyFilters()"><option value="">Todos</option><option value="ingresado">🟢 Con N° Bajas</option><option value="pendiente">🔴 Pendiente</option></select>
+        </div>
         <div style="flex:1"></div>
         <span class="count-badge" id="histCount">0 registros</span>
       </div>
@@ -330,7 +334,7 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
           <thead>
             <tr>
               <th>Sede</th><th>Punto de Venta</th><th>Fecha</th><th>Responsable</th>
-              <th>Producto</th><th>Código</th><th>Unidad</th><th>Cantidad</th><th>Motivo</th><th>Notas</th>
+              <th>Producto</th><th>Código</th><th>Unidad</th><th>Cantidad</th><th>Motivo</th><th>Notas</th><th>N° Bajas</th><th>Estado</th>
             </tr>
           </thead>
           <tbody id="histBody"><tr><td colspan="10" class="empty-state">Cargando reportes...</td></tr></tbody>
@@ -823,39 +827,58 @@ async function loadHistorial() {
   if (_histLoading) return;
   _histLoading = true;
   document.getElementById('histBody').innerHTML =
-    '<tr><td colspan="10" class="empty-state">Cargando...</td></tr>';
+    '<tr><td colspan="12" class="empty-state">Cargando...</td></tr>';
   try {
-    const res  = await fetch(SCRIPT_URL + '?action=historial');
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error);
-    historialData = json.data || [];
-    const sedes = [...new Set(historialData.map(r => r.restaurante || r.sede || '').filter(Boolean))];
+    const rows = parseCSV(await fetchCSV('Reportes'));
+    const firstRow = rows[0] || [];
+    const hasHeader = firstRow[0] && (isNaN(new Date(firstRow[0]).getTime()) || firstRow[0].toLowerCase().includes('fecha'));
+    const dataRows = hasHeader ? rows.slice(1) : rows;
+    historialData = dataRows.filter(r => r[0] || r[1]).map(cols => ({
+      fechaReporte:    (cols[0]  || '').trim(),
+      restaurante:     (cols[1]  || '').trim(),
+      encargado:       (cols[2]  || '').trim(),
+      producto:        (cols[3]  || '').trim(),
+      codigo:          (cols[4]  || '').trim(),
+      familia:         (cols[5]  || '').trim(),
+      subfamilia:      (cols[6]  || '').trim(),
+      unidadMedida:    (cols[7]  || '').trim(),
+      cantidad:        (cols[8]  || '').trim(),
+      vencimiento:     (cols[9]  || '').trim(),
+      motivo:          (cols[10] || '').trim(),
+      notas:           (cols[11] || '').trim(),
+      fechaRegistro:   (cols[12] || '').trim(),
+      numeroBajas:     (cols[13] || '').trim()
+    }));
+    const sedes = [...new Set(historialData.map(r => r.restaurante || '').filter(Boolean))];
     const fs = document.getElementById('filtroSede');
     const curr = fs.value;
     fs.innerHTML = '<option value="">Todas las sedes</option>' +
-      sedes.map(s => `<option value="${esc(s)}" ${s===curr?'selected':''}>${esc(s)}</option>`).join('');
+      sedes.map(s => '<option value="' + esc(s) + '" ' + (s===curr?'selected':'') + '>' + esc(s) + '</option>').join('');
     const motivos = [...new Set(historialData.map(r => r.motivo || '').filter(Boolean))];
     const fm = document.getElementById('filtroMotivo');
-    if (fm) { const currM = fm.value; fm.innerHTML = '<option value="">Todos los motivos</option>' + motivos.map(m => `<option value="${esc(m)}" ${m===currM?'selected':''}>${esc(m)}</option>`).join(''); }
+    if (fm) { const currM = fm.value; fm.innerHTML = '<option value="">Todos los motivos</option>' + motivos.map(m => '<option value="' + esc(m) + '" ' + (m===currM?'selected':'') + '>' + esc(m) + '</option>').join(''); }
     applyFilters();
   } catch(e) {
     document.getElementById('histBody').innerHTML =
-      `<tr><td colspan="10" class="empty-state">Error: ${esc(e.message)}</td></tr>`;
+      '<tr><td colspan="12" class="empty-state">Error: ' + esc(e.message) + '</td></tr>';
   } finally { _histLoading = false; }
 }
 
 function applyFilters() {
-  const sede = document.getElementById('filtroSede').value.toLowerCase();
+  const sede   = document.getElementById('filtroSede').value.toLowerCase();
   const motivo = (document.getElementById('filtroMotivo') ? document.getElementById('filtroMotivo').value.toLowerCase() : '');
-  const prod = document.getElementById('filtroProducto').value.toLowerCase();
+  const prod   = document.getElementById('filtroProducto').value.toLowerCase();
+  const estado = (document.getElementById('filtroEstado') ? document.getElementById('filtroEstado').value : '');
   filteredData = historialData.filter(function(r) {
-const rSede = (r.restaurante || r.sede || '').toLowerCase();
-const rProd = (r.producto || r.nombre || '').toLowerCase();
-const rCod  = (r.codigo || '').toLowerCase();
-const rMotivo = (r.motivo || '').toLowerCase();
-return (!sede || rSede.includes(sede)) && (!motivo || rMotivo === motivo) && (!prod || rProd.includes(prod) || rCod.includes(prod));
-});
-renderHistorial();
+    const rSede   = (r.restaurante || r.sede || '').toLowerCase();
+    const rProd   = (r.producto || r.nombre || '').toLowerCase();
+    const rCod    = (r.codigo || '').toLowerCase();
+    const rMotivo = (r.motivo || '').toLowerCase();
+    const rNB     = (r.numeroBajas || '').trim();
+    const estadoOk = !estado || (estado === 'ingresado' ? rNB !== '' : rNB === '');
+    return (!sede || rSede.includes(sede)) && (!motivo || rMotivo === motivo) && (!prod || rProd.includes(prod) || rCod.includes(prod)) && estadoOk;
+  });
+  renderHistorial();
 }
 
 function fmtDate(val) {
@@ -872,7 +895,7 @@ function renderHistorial() {
   selectedRows.clear(); updateCSVPanel();
 
   if (!filteredData.length) {
-    body.innerHTML = '<tr><td colspan="10" class="empty-state">No hay reportes que coincidan con los filtros.</td></tr>';
+    body.innerHTML = '<tr><td colspan="12" class="empty-state">No hay reportes que coincidan con los filtros.</td></tr>';
     return;
   }
   body.innerHTML = filteredData.map((r, i) => {
@@ -886,6 +909,7 @@ function renderHistorial() {
     const cant  = r.cantidad    || '';
     const mot   = r.motivo      || '';
     const notas = r.notas       || '';
+    const nb    = r.numeroBajas   || '';
     return `<tr data-idx="${i}" onclick="toggleRow(${i}, this)">
       <td><span class="badge badge-blue">${esc(sede)}</span></td>
       <td>${esc(pv)}</td><td>${esc(fecha)}</td><td>${esc(enc)}</td>
@@ -894,6 +918,8 @@ function renderHistorial() {
       <td style="font-family:'JetBrains Mono',monospace">${esc(cant)}</td>
       <td>${esc(mot)}</td>
       <td style="color:var(--text3);font-size:12px">${esc(notas)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">${esc(nb)}</td>
+      <td style="font-size:16px;text-align:center">${nb ? '🟢' : '🔴'}</td>
     </tr>`;
   }).join('');
 }
@@ -920,11 +946,11 @@ function clearSelection() {
 function downloadCSV() {
   if (!selectedRows.size) return;
   const items = [...selectedRows].map(i => filteredData[i]).filter(Boolean);
-  let csv = 'codigo_barras,cantidad\n';
+  let csv = 'codigo_barras;cantidad\n';
   items.forEach(r => {
     const cod  = (r.codigo || '').replace(/"/g,'""');
     const cant = String(r.cantidad || '').replace(/"/g,'""');
-    csv += `"${cod}","${cant}"\n`;
+    csv += cod + ';' + cant + '\n';
   });
   const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
@@ -936,11 +962,11 @@ function downloadFilteredCSV() {
   if (!filteredData.length) return;
   const sede = document.getElementById('filtroSede').value || 'todos';
   const motivo = (document.getElementById('filtroMotivo') ? document.getElementById('filtroMotivo').value : '') || 'todos';
-  let csv = 'codigo_barras,cantidad\n';
+  let csv = 'codigo_barras;cantidad\n';
   filteredData.forEach(r => {
     const cod = (r.codigo || '').replace(/"/g,'""');
     const cant = String(r.cantidad || '').replace(/"/g,'""');
-    csv += `"${cod}","${cant}"\n`;
+    csv += cod + ';' + cant + '\n';
   });
   const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
