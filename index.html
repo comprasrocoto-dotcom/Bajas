@@ -334,7 +334,7 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
           <thead>
             <tr>
               <th>Sede</th><th>Punto de Venta</th><th>Fecha</th><th>Responsable</th>
-              <th>Producto</th><th>Código</th><th>Unidad</th><th>Cantidad</th><th>Motivo</th><th>Notas</th><th>N° Bajas</th><th>Estado</th>
+              <th>Producto</th><th>Código</th><th>Unidad</th><th>Cantidad</th><th>Motivo</th><th>Notas</th><th>N° Bajas</th><th>Estado</th><th>Registro Web</th>
             </tr>
           </thead>
           <tbody id="histBody"><tr><td colspan="10" class="empty-state">Cargando reportes...</td></tr></tbody>
@@ -618,7 +618,8 @@ function renderProducts() {
         placeholder="Escribe para buscar..."
         autocomplete="off" list="dl_${id}"
         oninput="onNombreInput(${id})"
-        onchange="autoFill(${id})" />
+        onchange="autoFill(${id})"
+        onblur="validateNombre(${id})" />
       <datalist id="dl_${id}"></datalist>
     </div>
     <div class="field" style="margin:0">
@@ -703,6 +704,34 @@ function autoFill(id) {
     }
   }
   saveCard(id);
+}
+
+
+function validateNombre(id) {
+  const el = document.getElementById('nombre_' + id);
+  if (!el) return;
+  const val = el.value.trim();
+  if (!val) return;
+  if (!PROD_MAP.has(val)) {
+    el.style.border = '2px solid var(--danger)';
+    el.style.boxShadow = '0 0 0 3px rgba(220,38,38,.18)';
+    el.title = 'Producto no v\u00E1lido. Selecciona de la lista.';
+    setTimeout(() => {
+      el.value = '';
+      el.style.border = '';
+      el.style.boxShadow = '';
+      el.title = '';
+      const codEl = document.getElementById('codigo_' + id);
+      const hidEl = document.getElementById('unidad_' + id);
+      const dispEl = document.getElementById('unidad_display_' + id);
+      if (codEl) codEl.value = '';
+      if (hidEl) hidEl.dataset.value = '';
+      if (dispEl) dispEl.innerHTML = '<div class="unit-display empty">Se completar\u00E1 al elegir el producto</div>';
+      saveCard(id);
+    }, 1200);
+  } else {
+    autoFill(id);
+  }
 }
 
 // ════════════════════════════════════════════
@@ -827,7 +856,7 @@ async function loadHistorial() {
   if (_histLoading) return;
   _histLoading = true;
   document.getElementById('histBody').innerHTML =
-    '<tr><td colspan="12" class="empty-state">Cargando...</td></tr>';
+    '<tr><td colspan="13" class="empty-state">Cargando...</td></tr>';
   try {
     const rows = parseCSV(await fetchCSV('Reportes'));
     const firstRow = rows[0] || [];
@@ -847,7 +876,8 @@ async function loadHistorial() {
       motivo:          (cols[10] || '').trim(),
       notas:           (cols[11] || '').trim(),
       fechaRegistro:   (cols[12] || '').trim(),
-      numeroBajas:     (cols[13] || '').trim()
+      numeroBajas:     (cols[13] || '').trim(),
+      registroWeb:     (cols[14] || '').trim()
     }));
     const sedes = [...new Set(historialData.map(r => r.restaurante || '').filter(Boolean))];
     const fs = document.getElementById('filtroSede');
@@ -860,7 +890,7 @@ async function loadHistorial() {
     applyFilters();
   } catch(e) {
     document.getElementById('histBody').innerHTML =
-      '<tr><td colspan="12" class="empty-state">Error: ' + esc(e.message) + '</td></tr>';
+      '<tr><td colspan="13" class="empty-state">Error: ' + esc(e.message) + '</td></tr>';
   } finally { _histLoading = false; }
 }
 
@@ -895,7 +925,7 @@ function renderHistorial() {
   selectedRows.clear(); updateCSVPanel();
 
   if (!filteredData.length) {
-    body.innerHTML = '<tr><td colspan="12" class="empty-state">No hay reportes que coincidan con los filtros.</td></tr>';
+    body.innerHTML = '<tr><td colspan="13" class="empty-state">No hay reportes que coincidan con los filtros.</td></tr>';
     return;
   }
   body.innerHTML = filteredData.map((r, i) => {
@@ -910,6 +940,7 @@ function renderHistorial() {
     const mot   = r.motivo      || '';
     const notas = r.notas       || '';
     const nb    = r.numeroBajas   || '';
+    const rw    = r.registroWeb     || '';
     return `<tr data-idx="${i}" onclick="toggleRow(${i}, this)">
       <td><span class="badge badge-blue">${esc(sede)}</span></td>
       <td>${esc(pv)}</td><td>${esc(fecha)}</td><td>${esc(enc)}</td>
@@ -920,6 +951,7 @@ function renderHistorial() {
       <td style="color:var(--text3);font-size:12px">${esc(notas)}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">${esc(nb)}</td>
       <td style="font-size:16px;text-align:center">${nb ? '🟢' : '🔴'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--primary)">${esc(rw)}</td>
     </tr>`;
   }).join('');
 }
