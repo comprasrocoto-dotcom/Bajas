@@ -766,6 +766,22 @@ if(type==='success'){ok.textContent=text;ok.style.display='block';ok.scrollIntoV
 else{err.textContent=text;err.style.display='block';err.scrollIntoView({behavior:'smooth',block:'nearest'});}
 }
 function hideMsg(){document.getElementById('msgSuccess').style.display='none';document.getElementById('msgError').style.display='none';}
+async function loadPrices(){
+if(PRICE_MAP.size>0) return; // already loaded
+try{
+const sheetNames=['ROCOTO','MALANGA'];
+for(const sn of sheetNames){
+const rows=parseCSV(await fetchCSV(sn));
+const fR=rows[0]||[],hasH=fR[0]&&isNaN(Number(fR[0]))&&fR[0].length>3;
+rows.slice(hasH?1:0).forEach(cols=>{
+const ref=(cols[0]||'').trim();
+const precioRaw=(cols[5]||'').replace(/[^0-9.,]/g,'').replace(',','.');
+const precio=parseFloat(precioRaw)||0;
+if(ref&&precio>0) PRICE_MAP.set(ref,precio);
+});
+}
+}catch(e){console.warn('loadPrices error:',e);}
+}
 let _histLoading=false;
 async function loadHistorial(){
 if(_histLoading) return;
@@ -788,6 +804,7 @@ fs.innerHTML='<option value="">Todas las sedes</option>'+sedes.map(s=>'<option v
 const motivos=[...new Set(historialData.map(r=>r.motivo||'').filter(Boolean))];
 const fm=document.getElementById('filtroMotivo');
 if(fm){const cM=fm.value;fm.innerHTML='<option value="">Todos los motivos</option>'+motivos.map(m=>'<option value="'+esc(m)+'" '+(m===cM?'selected':'')+'>'+esc(m)+'</option>').join('');}
+await loadPrices();
 applyFilters();
 }catch(e){document.getElementById('histBody').innerHTML='<tr><td colspan="12"><div class="empty-state-premium"><div class="empty-icon">⚠️</div><div class="empty-title">Error cargando datos</div><div class="empty-desc">'+esc(e.message)+'</div></div></td></tr>';}
 finally{_histLoading=false;}
