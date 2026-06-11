@@ -804,7 +804,7 @@ fs.innerHTML='<option value="">Todas las sedes</option>'+sedes.map(s=>'<option v
 const motivos=[...new Set(historialData.map(r=>r.motivo||'').filter(Boolean))];
 const fm=document.getElementById('filtroMotivo');
 if(fm){const cM=fm.value;fm.innerHTML='<option value="">Todos los motivos</option>'+motivos.map(m=>'<option value="'+esc(m)+'" '+(m===cM?'selected':'')+'>'+esc(m)+'</option>').join('');}
-await loadPrices();
+loadPrices().then(()=>{if(filteredData.length)computeMetrics(filteredData);}).catch(()=>{});
 applyFilters();
 }catch(e){document.getElementById('histBody').innerHTML='<tr><td colspan="12"><div class="empty-state-premium"><div class="empty-icon">⚠️</div><div class="empty-title">Error cargando datos</div><div class="empty-desc">'+esc(e.message)+'</div></div></td></tr>';}
 finally{_histLoading=false;}
