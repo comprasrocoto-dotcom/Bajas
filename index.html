@@ -325,9 +325,9 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
         <div style="flex:1"></div>
         <span class="count-badge" id="histCount">0 registros</span>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0 4px;">
-        <span style="font-size:12px;color:var(--text3);" id="csvHint">Selecciona filtros para exportar</span>
-        <button class="btn btn-primary" id="btnDownloadFiltered" onclick="downloadFilteredCSV()" style="font-size:13px;padding:8px 18px;gap:7px;">
+      <div style="position:sticky;left:0;right:0;display:flex;align-items:center;gap:12px;padding:8px 0 6px;background:var(--surface);z-index:2;">
+        <span style="font-size:12px;color:var(--text3);flex:1;min-width:0;" id="csvHint">Selecciona filtros para exportar</span>
+        <button class="btn btn-primary" id="btnDownloadFiltered" onclick="downloadFilteredCSV()" style="font-size:13px;padding:8px 18px;gap:7px;white-space:nowrap;">
           <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg>
           Descargar CSV
         </button>
