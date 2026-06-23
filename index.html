@@ -1107,7 +1107,7 @@ a.href=url;a.download='bajas_'+new Date().toISOString().slice(0,10)+'.xls';a.cli
 function exportCSV(){
   // Toma EXACTAMENTE el arreglo ya filtrado en memoria (filteredData),
   // sin volver a consultar la base de datos ni Google Sheets.
-  const data = Array.isArray(window.filteredData) ? filteredData : [];
+  const data = (typeof filteredData !== 'undefined' && Array.isArray(filteredData)) ? filteredData : [];
   if(!data.length){ csvToast('No hay registros para exportar.','error'); return; }
   csvToast('Exportando '+data.length+' registros...','info');
   try{
