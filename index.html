@@ -375,6 +375,7 @@ Actualizar
 <svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 3H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9l-6-6zm-1 7H7v-1.5h3V10zm0 2.5H7V11h3v1.5zm3 0h-2V11h2v1.5zm0-2.5h-2v-1.5h2V10zm0-3.5V4.5L14.5 7H13z"/></svg>
 Exportar Excel
 </button>
+<button class="btn btn-outline btn-sm" onclick="exportCSV()"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg>Exportar CSV</button>
 <button class="btn btn-primary btn-sm" onclick="exportPDF()">
 <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1zM3 17h14a1 1 0 0 1 0 2H3a1 1 0 0 1 0-2z"/></svg>
 Exportar PDF
@@ -1102,6 +1103,61 @@ csv+=[r.restaurante,fmtDate(r.fechaReporte),r.encargado,r.producto,r.codigo,r.un
 const blob=new Blob([csv],{type:'application/vnd.ms-excel;charset=utf-8;'});
 const url=URL.createObjectURL(blob);const a=document.createElement('a');
 a.href=url;a.download='bajas_'+new Date().toISOString().slice(0,10)+'.xls';a.click();URL.revokeObjectURL(url);
+}
+function exportCSV(){
+  // Toma EXACTAMENTE el arreglo ya filtrado en memoria (filteredData),
+  // sin volver a consultar la base de datos ni Google Sheets.
+  const data = Array.isArray(window.filteredData) ? filteredData : [];
+  if(!data.length){ csvToast('No hay registros para exportar.','error'); return; }
+  csvToast('Exportando '+data.length+' registros...','info');
+  try{
+    const headers = ['SEDE','FECHA','RESPONSABLE','PRODUCTO','CODIGO','UNIDAD','CANTIDAD','MOTIVO','NOTAS','NUMERO_BAJA','ESTADO'];
+    const cell = v => { v = (v==null?'':String(v)); return '"'+v.replace(/"/g,'""')+'"'; };
+    const rows = data.map(r => {
+      const nb = (r.numeroBajas==null?'':String(r.numeroBajas)).trim();
+      const estado = nb ? 'Registrado' : 'Pendiente';
+      return [
+        r.restaurante,
+        fmtDate(r.fechaReporte),
+        r.encargado,
+        r.producto,
+        r.codigo,
+        r.unidadMedida,
+        r.cantidad,
+        r.motivo,
+        r.notas,
+        r.numeroBajas,
+        estado
+      ].map(cell).join(',');
+    });
+    const csv = '\uFEFF' + headers.map(cell).join(',') + '\r\n' + rows.join('\r\n') + '\r\n';
+    const now = new Date();
+    const p = n => String(n).padStart(2,'0');
+    const fname = 'historial_reportes_'+now.getFullYear()+'-'+p(now.getMonth()+1)+'-'+p(now.getDate())+'_'+p(now.getHours())+'-'+p(now.getMinutes())+'.csv';
+    const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fname;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1500);
+    csvToast('CSV generado correctamente','success');
+  }catch(e){
+    console.error(e);
+    csvToast('No se pudo generar el CSV.','error');
+  }
+}
+function csvToast(text,type){
+  let el = document.getElementById('csvToast');
+  if(!el){
+    el = document.createElement('div'); el.id='csvToast';
+    el.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;padding:12px 20px;border-radius:10px;font-family:Inter,sans-serif;font-size:14px;font-weight:600;color:#fff;box-shadow:0 6px 24px rgba(0,0,0,.2);max-width:90vw;text-align:center;transition:opacity .25s;opacity:0;';
+    document.body.appendChild(el);
+  }
+  const colors={success:'#2E7D32',error:'#C62828',info:'#1565C0'};
+  el.style.background = colors[type]||colors.info;
+  el.textContent = text; el.style.opacity='1';
+  clearTimeout(el.__t);
+  el.__t = setTimeout(()=>{ el.style.opacity='0'; }, type==='info'?1800:3000);
 }
 function exportPDF(){alert('Exportación PDF disponible próximamente. Por ahora usa la opción de imprimir del navegador (Ctrl+P).');}
 
