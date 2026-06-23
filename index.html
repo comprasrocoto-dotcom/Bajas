@@ -1108,32 +1108,20 @@ function exportCSV(){
   // Toma EXACTAMENTE el arreglo ya filtrado en memoria (filteredData),
   // sin volver a consultar la base de datos ni Google Sheets.
   const data = (typeof filteredData !== 'undefined' && Array.isArray(filteredData)) ? filteredData : [];
-  if(!data.length){ csvToast('No hay registros para exportar.','error'); return; }
-  csvToast('Exportando '+data.length+' registros...','info');
+  // Solo registros con codigo (codigo de barras); excluir los que no lo tengan.
+  const rows = data.filter(r => String(r.codigo==null?'':r.codigo).trim() !== '').map(r => {
+    const codigo = String(r.codigo).trim();
+    const cant = parseInt(r.cantidad, 10);
+    const cantidad = isNaN(cant) ? 0 : cant;
+    return codigo + ';' + cantidad;
+  });
+  if(!rows.length){ csvToast('No hay registros para exportar','error'); return; }
+  csvToast('Exportando '+rows.length+' registros...','info');
   try{
-    const headers = ['SEDE','FECHA','RESPONSABLE','PRODUCTO','CODIGO','UNIDAD','CANTIDAD','MOTIVO','NOTAS','NUMERO_BAJA','ESTADO'];
-    const cell = v => { v = (v==null?'':String(v)); return '"'+v.replace(/"/g,'""')+'"'; };
-    const rows = data.map(r => {
-      const nb = (r.numeroBajas==null?'':String(r.numeroBajas)).trim();
-      const estado = nb ? 'Registrado' : 'Pendiente';
-      return [
-        r.restaurante,
-        fmtDate(r.fechaReporte),
-        r.encargado,
-        r.producto,
-        r.codigo,
-        r.unidadMedida,
-        r.cantidad,
-        r.motivo,
-        r.notas,
-        r.numeroBajas,
-        estado
-      ].map(cell).join(',');
-    });
-    const csv = '\uFEFF' + headers.map(cell).join(',') + '\r\n' + rows.join('\r\n') + '\r\n';
+    const csv = rows.join('\r\n') + '\r\n';
     const now = new Date();
     const p = n => String(n).padStart(2,'0');
-    const fname = 'historial_reportes_'+now.getFullYear()+'-'+p(now.getMonth()+1)+'-'+p(now.getDate())+'_'+p(now.getHours())+'-'+p(now.getMinutes())+'.csv';
+    const fname = 'bajas_inventario_'+now.getFullYear()+'-'+p(now.getMonth()+1)+'-'+p(now.getDate())+'_'+p(now.getHours())+'-'+p(now.getMinutes())+'.csv';
     const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
