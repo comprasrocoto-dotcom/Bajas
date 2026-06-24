@@ -1,4 +1,41 @@
 <!DOCTYPE html>
+<!--
+=====================================================================
+  GESTIÓN DE INVENTARIO — BAJAS Y MALA ROTACIÓN  (Frontend)
+=====================================================================
+  Aplicación de una sola página (SPA) para registrar bajas de
+  inventario por sede y consultar el historial.
+
+  ARQUITECTURA
+  ------------
+  - Frontend: este único archivo HTML (HTML + CSS + JS embebidos).
+  - Backend : Google Apps Script (Code.gs) publicado como Web App.
+  - Datos   : Google Sheets (hojas SEDE, INSUMOS/catálogo, Reportes).
+
+  FLUJO DE DATOS
+  --------------
+  - Catálogo, sedes y precios: se leen de Google Sheets en vivo vía
+    el endpoint público gviz/CSV (función fetchCSV()).
+  - Guardar reporte: POST JSON al Apps Script (SCRIPT_URL) -> doPost.
+  - Historial: se relee de la hoja Reportes (gviz/CSV) en loadHistorial().
+  - "Numero de Bajas": se edita en la tabla y se sincroniza con el
+    backend mediante action 'updateNB'.
+
+  PROTECCIÓN ANTI-DUPLICADOS (ver saveReport)
+  -------------------------------------------
+  1. Candado isSaving: ignora disparos mientras hay un guardado en curso.
+  2. reporteId único por intento (idempotencia): el MISMO id se reenvía
+     en reintentos, y el backend descarta el duplicado.
+  3. resetForm() tras éxito: vacía los productos para que sea imposible
+     reenviar el mismo reporte con un segundo clic.
+
+  CONFIGURACIÓN (constantes al inicio del bloque de script)
+  ---------------------------------------------------------
+  - SCRIPT_URL : URL /exec del Web App de Apps Script.
+  - SHEET_ID   : ID del Google Sheet de origen.
+  Si cambias de deployment, actualiza SCRIPT_URL.
+=====================================================================
+-->
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
@@ -560,6 +597,42 @@ Eliminar
 </div>
 </div>
 <script>
+/* =====================================================================
+   GUÍA RÁPIDA DEL CÓDIGO (mapa de funciones)
+   ---------------------------------------------------------------------
+   CONFIG / ESTADO
+     SCRIPT_URL, SHEET_ID ........ endpoints del backend y la hoja.
+     products[], cardData{} ...... productos del reporte en edición.
+     isSaving, currentReporteId .. control anti-duplicados (ver saveReport).
+
+   CARGA DE DATOS (Google Sheets vía gviz/CSV)
+     fetchCSV(sn) ................ descarga una hoja como CSV.
+     parseCSV(text) .............. parsea CSV respetando comillas.
+     loadSedes() ................. llena el selector de sedes.
+     loadCatalog(sn) ............. carga el catálogo de la sede (PROD_MAP).
+     loadPrices() ................ carga precios para las métricas.
+
+   FORMULARIO DE REPORTE
+     onSedeChange() .............. al elegir sede: carga catálogo, etc.
+     addProduct()/removeProduct() . gestionan tarjetas de producto.
+     saveCard(id) ................ vuelca los inputs de una tarjeta a cardData.
+     autoFill(id)/validateNombre() . autocompletan/validan el producto.
+     validate() .................. valida el reporte completo.
+     genReporteId() .............. genera el id de idempotencia.
+     resetForm() ................. limpia el formulario tras guardar.
+     saveReport() ................ ENVÍO al backend (anti-duplicados aquí).
+
+   HISTORIAL Y MÉTRICAS
+     loadHistorial() ............. relee la hoja Reportes y arma filtros.
+     applyFilters()/computeMetrics() . filtran y calculan indicadores.
+     renderChart() ............... dibuja el gráfico por motivo.
+     saveNB()/nbKeydown() ........ editan "Numero de Bajas" (action updateNB).
+     exportCSV()/exportExcel()/exportPDF() . exportaciones.
+
+   UI
+     showPage(n), showMsg()/hideMsg(), openDrawer()/closeDrawer(),
+     openActionsMenu()/actionsAction() . navegación y menús.
+   ===================================================================== */
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwaIFtfgYgKUGzuIn41tFWg7uY-2mR0RkEWbJqj0ben1WVNmzrkk20tDDgs66VTIlNwAw/exec';
 const SHEET_ID='1EFtVAYEgpmsYkL4CgpAubo-LqjRvBAKBGmr3g-tekDA';
 let sedesData=[],motivosData=[],historialData=[],filteredData=[];
