@@ -566,6 +566,7 @@ let sedesData=[],motivosData=[],historialData=[],filteredData=[];
 let selectedRows=new Set();
 let PROD_MAP=new Map(),PRICE_MAP=new Map(),ALL_PRODUCTS=[],currentCatalogKey='';
 let products=[],cardData={},counter=0,currentSede='';
+let isSaving=false,currentReporteId='';
 let _actionsIdx=-1;
 
 function showPage(n){
@@ -746,18 +747,38 @@ if(!d.motivo) return '⚠ Todos los productos deben tener motivo.';
 }
 return null;
 }
+function genReporteId(){
+try{if(window.crypto&&crypto.randomUUID)return 'R-'+crypto.randomUUID();}catch(e){}
+return 'R-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+}
+function resetForm(){
+products=[];cardData={};
+renderProducts();
+const sb=document.getElementById('saveBtn');if(sb)sb.disabled=false;
+}
 async function saveReport(){
+if(isSaving) return;                                   // candado: ignora disparos mientras hay uno en curso
 products.forEach(id=>saveCard(id));
 const err=validate();if(err){showMsg('error',err);return;}
+if(!currentReporteId) currentReporteId=genReporteId(); // el MISMO id se reutiliza si hay reintento
+isSaving=true;
 const btn=document.getElementById('saveBtn'),orig=btn.innerHTML;
 btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Guardando...';hideMsg();
-const payload={action:'save',fechaReporte:document.getElementById('fechaReporte').value,sede:document.getElementById('sede').value,encargado:document.getElementById('encargado').value.trim(),productos:products.map(id=>({nombre:cardData[id].nombre,codigo:cardData[id].codigo,unidad:cardData[id].unidad,cantidad:cardData[id].cantidad,motivo:cardData[id].motivo,notas:cardData[id].notas}))};
+const payload={action:'save',reporteId:currentReporteId,fechaReporte:document.getElementById('fechaReporte').value,sede:document.getElementById('sede').value,encargado:document.getElementById('encargado').value.trim(),productos:products.map(id=>({nombre:cardData[id].nombre,codigo:cardData[id].codigo,unidad:cardData[id].unidad,cantidad:cardData[id].cantidad,motivo:cardData[id].motivo,notas:cardData[id].notas}))};
+const n=payload.productos.length;
 try{
 const res=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});
 const json=await res.json();
-if(json.ok)showMsg('success','✓ Reporte guardado correctamente ('+payload.productos.length+' producto'+(payload.productos.length!==1?'s':'')+'.');}
-catch(e){showMsg('error','Error al guardar: '+e.message);}
-finally{btn.disabled=false;btn.innerHTML=orig;}
+if(json&&json.ok){
+showMsg('success','✓ Reporte guardado correctamente ('+n+' producto'+(n!==1?'s':'')+').'+(json.duplicate?' Ya estaba registrado: no se duplicó.':''));
+currentReporteId='';        // éxito confirmado -> el próximo reporte tendrá id nuevo
+resetForm();                // vacía los productos -> es imposible reenviar el mismo reporte
+}else{
+throw new Error((json&&json.error)||'Respuesta no válida del servidor');
+}
+}
+catch(e){showMsg('error','Error al guardar: '+e.message+'. Puedes reintentar: el sistema evitará duplicar.');}
+finally{isSaving=false;btn.disabled=false;btn.innerHTML=orig;}
 }
 function showMsg(type,text){
 const ok=document.getElementById('msgSuccess'),err=document.getElementById('msgError');
