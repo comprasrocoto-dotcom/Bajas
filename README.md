@@ -7,15 +7,15 @@ Aplicación web para **registrar bajas de inventario** (productos vencidos, dañ
 ## Arquitectura
 
 ```
-┌───────────────┐    gviz/CSV (lectura)     ┌─────────────────┐
-│  index.html   │ ────────────────────────▶ │                 │
-│  (Frontend    │                            │  Google Sheets  │
-│   SPA: HTML/  │    POST JSON (escritura)   │  (base de datos)│
-│   CSS/JS)     │ ──┐   ┌──────────────┐ ──▶ │                 │
-└───────────────┘   └──▶│  Code.gs     │     └─────────────────┘
-                        │ (Apps Script │
-                        │  Web App)    │
-                        └──────────────┘
+┌───────────────┐    gviz/CSV (lectura)       ┌─────────────────┐
+│  index.html   │ ────────────────────────▶  │                 │
+│  (Frontend    │                             │  Google Sheets  │
+│   SPA: HTML/  │    POST JSON (escritura)    │  (base de datos)│
+│   CSS/JS)     │ ──┐    ┌──────────────┐ ──▶ │                 │
+└───────────────┘   └──▶│  Code.gs     │      └─────────────────┘
+                         │ (Apps Script │
+                         │  Web App)    │
+                         └──────────────┘
 ```
 
 - **Frontend** — `index.html`: una sola página, sin dependencias de build. Lee catálogos/sedes/historial directamente del Sheet por el endpoint público `gviz/CSV`, y escribe (guardar reporte / actualizar "Numero de Bajas") por `POST` al Apps Script.
@@ -31,7 +31,6 @@ Aplicación web para **registrar bajas de inventario** (productos vencidos, dañ
 | `index.html`     | Aplicación completa (producción). **Este es el archivo vivo.**      |
 | `Code.gs`        | Backend de Google Apps Script.                                     |
 | `README.md`      | Este documento.                                                   |
-| ~~`index (3).html`~~ | **Obsoleto — se puede borrar.** Prototipo viejo (ver más abajo). |
 
 ---
 
