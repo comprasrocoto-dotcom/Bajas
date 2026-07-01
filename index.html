@@ -157,6 +157,11 @@ textarea{min-height:76px;resize:vertical;line-height:1.6;height:auto;}
 .add-btn:hover{background:#1565C0;color:#fff;border-style:solid;border-color:#1565C0;box-shadow:0 4px 14px rgba(21,101,192,.35);transform:translateY(-1px);}
 .add-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 
+/* Nota obligatoria para cocina */
+.notas-hint{font-size:11.5px;margin-top:6px;line-height:1.45;font-weight:500;}
+.notas-hint.short{color:var(--danger);}
+.notas-hint.ok{color:var(--success);}
+
 /* NB INPUT */
 .nb-cell{display:flex;align-items:center;gap:4px;}
 .nb-input{border:1.5px solid transparent;border-radius:6px;padding:2px 7px;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:500;color:var(--primary);background:transparent;width:76px;cursor:text;transition:all 200ms;height:26px;}
@@ -777,14 +782,53 @@ return '<div class="product-card" id="card_'+id+'">'+
 '<div id="unidad_display_'+id+'">'+uH+'</div>'+
 '<input type="hidden" id="unidad_'+id+'" data-value="'+esc(uV)+'" /></div>'+
 '<div class="field" style="margin:0"><label>Motivo <span class="req">*</span></label>'+
-'<select id="motivo_'+id+'" onchange="saveCard('+id+')"><option value="">Selecciona...</option>'+mOpts+'</select></div></div>'+
-'<div class="field" style="margin:0"><label>Notas Adicionales <span class="opt">(opcional)</span></label>'+
-'<textarea id="notas_'+id+'" placeholder="Observaciones, contexto..." oninput="saveCard('+id+')">'+esc(s.notas)+'</textarea></div>'+
+'<select id="motivo_'+id+'" onchange="onMotivoChange('+id+')"><option value="">Selecciona...</option>'+mOpts+'</select></div></div>'+
+'<div class="field" style="margin:0"><label>Nota para Cocina <span class="req">*</span> <span class="opt">— explica la baja según el motivo (mín. 15 caracteres)</span></label>'+
+'<textarea id="notas_'+id+'" placeholder="'+esc(notaPlaceholder(s.motivo))+'" oninput="onNotasInput('+id+')">'+esc(s.notas)+'</textarea>'+
+'<div class="notas-hint short" id="notas_hint_'+id+'"></div></div>'+
 '</div>';
 }).join('');
 products.forEach(pid=>buildDatalist(pid));
+products.forEach(pid=>updateNotasHint(pid));
 }
 function onNombreInput(id){saveCard(id);}
+
+/* ---- Nota obligatoria para cocina (mín. 15 caracteres, guiada por el motivo) ---- */
+const NOTA_MIN=15;
+const MOTIVO_NOTA_GUIA={
+'VENCIMIENTO':'indica la fecha de vencimiento y en qué estado llegó el producto',
+'BAJA':'describe por qué ya no es apto (aspecto, olor, textura, etc.)',
+'COBRO':'explica a quién se le cobra y la razón del cobro',
+'ROTACION':'indica desde cuándo estaba el producto y por qué no rotó',
+'DEVOLUCION DEL CLIENTE':'detalla qué reportó el cliente y cómo volvió el producto',
+'MERMA':'explica cómo ocurrió la merma (porcionado, preparación, etc.)',
+'DAÑO DE NEVERA':'indica qué equipo o nevera falló y por cuánto tiempo',
+'ACCIDENTE LABORAL':'describe el accidente y cómo afectó al producto',
+'PRUEBA DE CALIDAD':'indica qué se evaluó y el resultado de la prueba',
+'CAPACITACION':'describe para qué capacitación se usó el producto',
+'FOTOS':'indica para qué material o fotos se usó el producto'
+};
+function motivoGuia(m){
+const k=(m||'').toUpperCase().trim();
+if(MOTIVO_NOTA_GUIA[k]) return MOTIVO_NOTA_GUIA[k];
+for(const key in MOTIVO_NOTA_GUIA){ if(k&&key.split(' ')[0]===k.split(' ')[0]) return MOTIVO_NOTA_GUIA[key]; }
+return 'explica a la cocina el motivo de la baja';
+}
+function notaPlaceholder(m){
+return m?('Explica a la cocina: '+motivoGuia(m)+'…'):'Selecciona primero el motivo y explica a la cocina la baja…';
+}
+function updateNotasHint(id){
+const ta=document.getElementById('notas_'+id),hint=document.getElementById('notas_hint_'+id);
+if(!ta||!hint) return;
+const mot=document.getElementById('motivo_'+id)?.value||'';
+ta.placeholder=notaPlaceholder(mot);
+const guia=mot?('Explica a la cocina: '+motivoGuia(mot)+'.'):'Selecciona el motivo para saber qué explicarle a la cocina.';
+const len=ta.value.trim().length;
+if(len>=NOTA_MIN){hint.className='notas-hint ok';hint.textContent='✓ '+guia+' ('+len+' caracteres)';}
+else{hint.className='notas-hint short';hint.textContent='✍ '+guia+' — mínimo '+NOTA_MIN+' caracteres ('+len+'/'+NOTA_MIN+')';}
+}
+function onNotasInput(id){saveCard(id);updateNotasHint(id);}
+function onMotivoChange(id){saveCard(id);updateNotasHint(id);}
 function autoFill(id){
 const val=(document.getElementById('nombre_'+id)?.value||'').trim(),data=PROD_MAP.get(val);
 const codEl=document.getElementById('codigo_'+id),dispEl=document.getElementById('unidad_display_'+id),hidEl=document.getElementById('unidad_'+id);
@@ -817,6 +861,7 @@ if(!d.nombre.trim()) return '⚠ Todos los productos deben tener nombre.';
 if(!PROD_MAP.has(d.nombre.trim())) return '⚠ "'+d.nombre.trim()+'" no existe en el catálogo.';
 if(!d.cantidad) return '⚠ Todos los productos deben tener cantidad.';
 if(!d.motivo) return '⚠ Todos los productos deben tener motivo.';
+if(!d.notas||d.notas.trim().length<NOTA_MIN) return '⚠ El Producto '+(products.indexOf(id)+1)+' necesita una nota para cocina de mínimo '+NOTA_MIN+' caracteres, explicando la baja según el motivo seleccionado.';
 }
 return null;
 }
